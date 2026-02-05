@@ -158,6 +158,36 @@
           </div>
         </div>
       </section>
+
+      <!-- Story Books Section -->
+      <section class="kidsZone" aria-label="Story Books">
+        <div class="kidsHeader">
+          <div class="kidsBadge">Story Books</div>
+          <h2 class="kidsTitle">Bedtime Stories</h2>
+          <p class="kidsSubtitle">Dive into magical tales. Flip through pages with beautiful illustrations.</p>
+        </div>
+        <div id="storyBooks" class="grid" role="list"></div>
+      </section>
+
+      <!-- Learning Videos Section -->
+      <section class="kidsZone" aria-label="Learning Videos">
+        <div class="kidsHeader">
+          <div class="kidsBadge">Videos</div>
+          <h2 class="kidsTitle">Learning Videos</h2>
+          <p class="kidsSubtitle">Watch fun educational videos about letters, numbers, and more!</p>
+        </div>
+        <div id="videoGrid" class="grid" role="list"></div>
+      </section>
+
+      <!-- 3D Learn & Play Section -->
+      <section class="kidsZone" aria-label="3D Topics">
+        <div class="kidsHeader">
+          <div class="kidsBadge">3D Learn & Play</div>
+          <h2 class="kidsTitle">Interactive 3D Topics</h2>
+          <p class="kidsSubtitle">Explore amazing topics with interactive facts and animations.</p>
+        </div>
+        <div id="threeGrid" class="grid" role="list"></div>
+      </section>
     </section>
 
     <!-- PAGE: PARTY -->
@@ -165,70 +195,13 @@
       <div class="card">
         <div class="moodRow">
           <div class="pill">Parents + Kids</div>
-          <div class="pill soft">Booking Demo</div>
+          <div class="pill soft">Interactive Wizard</div>
         </div>
 
         <h1 class="title">Birthday Party Planner</h1>
-        <p class="subtitle">Pick a theme, decor, add-ons. Save a booking summary (demo).</p>
+        <p class="subtitle">Follow 5 steps to create your perfect party plan with checklists & timeline.</p>
 
-        <div class="partyGrid">
-          <div class="partyBox">
-            <h2 class="h2">1) Choose a theme</h2>
-            <div class="choiceGrid" role="list">
-              <button class="choice isSelected" type="button" data-choice="theme" data-value="Animals">Animals</button>
-              <button class="choice" type="button" data-choice="theme" data-value="Space">Space</button>
-              <button class="choice" type="button" data-choice="theme" data-value="Dinosaurs">Dinosaurs</button>
-              <button class="choice" type="button" data-choice="theme" data-value="Ocean">Ocean</button>
-              <button class="choice" type="button" data-choice="theme" data-value="Princess">Princess</button>
-              <button class="choice" type="button" data-choice="theme" data-value="Superheroes">Superheroes</button>
-            </div>
-          </div>
-
-          <div class="partyBox">
-            <h2 class="h2">2) Decor package</h2>
-            <div class="choiceGrid" role="list">
-              <button class="choice isSelected" type="button" data-choice="decor" data-value="Basic Decor">Basic Decor</button>
-              <button class="choice" type="button" data-choice="decor" data-value="Premium Decor">Premium Decor</button>
-              <button class="choice" type="button" data-choice="decor" data-value="Luxury Decor">Luxury Decor</button>
-            </div>
-
-            <div class="row2">
-              <label for="guests">Guests</label>
-              <input id="guests" type="number" min="5" max="100" value="20" />
-            </div>
-
-            <div class="row2">
-              <label for="date">Date</label>
-              <input id="date" type="date" />
-            </div>
-          </div>
-
-          <div class="partyBox">
-            <h2 class="h2">3) Add-ons</h2>
-            <label class="check"><input type="checkbox" id="addon-cake" checked /> Cake Table</label>
-            <label class="check"><input type="checkbox" id="addon-balloons" checked /> Balloon Arch</label>
-            <label class="check"><input type="checkbox" id="addon-games" /> Party Games Host</label>
-            <label class="check"><input type="checkbox" id="addon-photo" /> Photo Booth</label>
-
-            <div class="row2">
-              <label for="city">City</label>
-              <input id="city" type="text" placeholder="Ottawa" />
-            </div>
-          </div>
-
-          <div class="partyBox">
-            <h2 class="h2">Booking summary</h2>
-            <div class="summary" id="partySummary"></div>
-
-            <div class="buttons">
-              <button id="saveBookingBtn" type="button">Save Booking</button>
-              <button id="viewBookingBtn" type="button">View Saved</button>
-              <button id="clearBookingBtn" class="btn danger" type="button">Clear Saved</button>
-            </div>
-
-            <div class="status" id="partyStatus"></div>
-          </div>
-        </div>
+        <div id="partyWizard" class="wizard"></div>
       </div>
     </section>
     <!-- PAGE: CHAT -->
@@ -238,6 +211,8 @@
         <p class="subtitle">A simple local chat view. Messages are stored in localStorage for this demo.</p>
 
         <ul id="chatMessages" class="chatMessages" aria-live="polite"></ul>
+
+        <div id="chatChips" class="chipsRow" style="display:flex; gap:8px; flex-wrap:wrap; margin:12px 0;"></div>
 
         <div class="chatInputRow">
           <input id="chatName" class="chatInput" type="text" placeholder="Your name (optional)" style="max-width:180px" />
@@ -249,12 +224,27 @@
     </section>
   </main>
 
-  <!-- KIDS MODAL -->
+  <!-- MODAL FOR ALL CONTENT -->
   <div id="kzModal" class="modal hidden" aria-hidden="true">
+    <div class="modalCard" role="dialog" aria-modal="true" aria-label="Content modal">
+      <div class="modalTop">
+        <div class="modalTitle" id="kzModalTitle">Content</div>
+        <button id="kzModalClose" class="miniBtn" type="button">Close</button>
+      </div>
+
+      <!-- Modal Content Area - Dynamically Rendered -->
+      <div id="modalContent" class="modalBody">
+        <div style="text-align:center; padding:20px; color:#999;">Loading content…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGACY MODAL (For backwards compatibility with old animals/space explorer) -->
+  <div id="kzLegacyModal" class="modal hidden" aria-hidden="true" style="display:none;">
     <div class="modalCard" role="dialog" aria-modal="true" aria-label="Explorer details">
       <div class="modalTop">
-        <div class="modalTitle" id="kzModalTitle">Item</div>
-        <button id="kzModalClose" class="miniBtn" type="button">Close</button>
+        <div class="modalTitle" id="kzLegacyTitle">Item</div>
+        <button id="kzLegacyClose" class="miniBtn" type="button">Close</button>
       </div>
 
       <div class="media">
@@ -286,6 +276,7 @@
     </div>
   </div>
 
+  <script src="data.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
