@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FunCloud</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+ <header class="topbar">
+  <div class="brand">
+    <div class="logo">☁️</div>
+    <div class="brandText">
+      <div class="brandName">FunCloud</div>
+      <div class="brandTag">Inspiration, learning, and celebrations — all in one cloud experience.</div>
+    </div>
+  </div>
+</header>
+
+    <nav class="nav" aria-label="Primary navigation">
+      <button class="navBtn isActive" type="button" data-page="quotes">Quotes</button>
+      <button class="navBtn" type="button" data-page="kids">Kids Zone</button>
+      <button class="navBtn" type="button" data-page="party">Party Planner</button>
+        <button class="navBtn" type="button" data-page="chat">Chat</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- PAGE: QUOTES -->
+    <section class="page isActive" id="page-quotes" aria-label="Quotes page">
+      <div class="card">
+        <div class="moodRow">
+          <div class="mood" id="moodLabel">calm</div>
+          <div class="pill">Adult Zone</div>
+        </div>
+
+        <h1 class="title">Inspire Me</h1>
+        <p class="subtitle">Click New Quote. Save favourites. Change category.</p>
+
+        <div id="quote" class="quote">Click “New Quote” to get inspired.</div>
+        <div id="status" class="status"></div>
+
+        <div class="buttons">
+          <button id="btnQuote" type="button">New Quote</button>
+          <button id="btnFav" type="button">Save Favourite</button>
+          <button id="btnShow" type="button">Favourites</button>
+        </div>
+
+        <div class="row">
+          <label for="category">Category</label>
+          <select id="category">
+            <option value="all">All</option>
+            <option value="focus">Focus</option>
+            <option value="confidence">Confidence</option>
+            <option value="calm">Calm</option>
+            <option value="success">Success</option>
+          </select>
+        </div>
+      </div>
+
+      <section id="panel" class="panel hidden" aria-label="Favourites panel">
+        <div class="panelHead">
+          <h2 class="h2">Favourites</h2>
+          <button id="btnClose" class="btn small" type="button">Close</button>
+        </div>
+
+        <ul id="favList" class="favList"></ul>
+
+        <div class="panelActions">
+          <button id="btnClear" class="btn danger" type="button">Clear All</button>
+        </div>
+      </section>
+    </section>
+
+    <!-- PAGE: KIDS -->
+    <section class="page" id="page-kids" aria-label="Kids Zone page">
+      <section class="kidsZone" aria-label="Kids Zone">
+        <div class="kidsHeader">
+          <div class="kidsBadge">Kids Zone</div>
+          <h2 class="kidsTitle">World Explorer</h2>
+          <p class="kidsSubtitle">Pick a world, then tap an item to see an animation and fun facts.</p>
+        </div>
+
+        <div class="kidsCategories" role="tablist" aria-label="Kids world tabs">
+          <button class="kidBtn kzTab isActive" type="button" data-zone="animals" role="tab" aria-selected="true">Animals</button>
+          <button class="kidBtn kzTab" type="button" data-zone="space" role="tab" aria-selected="false">Space</button>
+          <button class="kidBtn kzTab" type="button" data-zone="dinosaurs" role="tab" aria-selected="false">Dinosaurs</button>
+          <button class="kidBtn kzTab" type="button" data-zone="ocean" role="tab" aria-selected="false">Ocean</button>
+        </div>
+
+        <div id="kidsExplorer" class="animalExplorer" aria-label="Explorer content">
+          <div class="explorerTop">
+            <h3 class="explorerTitle" id="explorerTitle">Animal World Explorer</h3>
+            <div class="explorerRight">
+              <button id="kidsSoundToggle" class="miniBtn" type="button" aria-pressed="true">Sound: On</button>
+              <button id="closeExplorerBtn" class="miniBtn" type="button">Hide</button>
+            </div>
+          </div>
+
+          <!-- Animals -->
+          <div class="kzPanel" data-zone="animals" role="tabpanel">
+            <div class="grid" role="list">
+              <button class="tile kzItem" type="button" data-zone="animals" data-item="lion" role="listitem">
+                <div class="tileEmoji">🦁</div><div class="tileName">Lion</div><div class="tileHint">Tap</div>
+              </button>
+              <button class="tile kzItem" type="button" data-zone="animals" data-item="elephant" role="listitem">
+                <div class="tileEmoji">🐘</div><div class="tileName">Elephant</div><div class="tileHint">Tap</div>
+              </button>
+              <button class="tile kzItem" type="button" data-zone="animals" data-item="dolphin" role="listitem">
+                <div class="tileEmoji">🐬</div><div class="tileName">Dolphin</div><div class="tileHint">Tap</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Space -->
+          <div class="kzPanel hidden" data-zone="space" role="tabpanel">
+            <div class="grid" role="list">
+              <button class="tile kzItem" type="button" data-zone="space" data-item="rocket" role="listitem">
+                <div class="tileEmoji">🚀</div><div class="tileName">Rocket</div><div class="tileHint">Tap</div>
+              </button>
+              <button class="tile kzItem" type="button" data-zone="space" data-item="planet" role="listitem">
+                <div class="tileEmoji">🪐</div><div class="tileName">Planet</div><div class="tileHint">Tap</div>
+              </button>
+              <button class="tile kzItem" type="button" data-zone="space" data-item="astronaut" role="listitem">
+                <div class="tileEmoji">🧑‍🚀</div><div class="tileName">Astronaut</div><div class="tileHint">Tap</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dinosaurs -->
+          <div class="kzPanel hidden" data-zone="dinosaurs" role="tabpanel">
+            <div class="grid" role="list">
+              <button class="tile kzItem" type="button" data-zone="dinosaurs" data-item="trex" role="listitem">
+                <div class="tileEmoji">🦖</div><div class="tileName">T-Rex</div><div class="tileHint">Tap</div>
+              </button>
+              <button class="tile kzItem" type="button" data-zone="dinosaurs" data-item="sauropod" role="listitem">
+                <div class="tileEmoji">🦕</div><div class="tileName">Sauropod</div><div class="tileHint">Tap</div>
+              </button>
+              <button class="tile kzItem" type="button" data-zone="dinosaurs" data-item="egg" role="listitem">
+                <div class="tileEmoji">🥚</div><div class="tileName">Dino Egg</div><div class="tileHint">Tap</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Ocean -->
+          <div class="kzPanel hidden" data-zone="ocean" role="tabpanel">
+            <div class="grid" role="list">
+              <button class="tile kzItem" type="button" data-zone="ocean" data-item="shark" role="listitem">
+                <div class="tileEmoji">🦈</div><div class="tileName">Shark</div><div class="tileHint">Tap</div>
+              </button>
+              <button class="tile kzItem" type="button" data-zone="ocean" data-item="octopus" role="listitem">
+                <div class="tileEmoji">🐙</div><div class="tileName">Octopus</div><div class="tileHint">Tap</div>
+              </button>
+              <button class="tile kzItem" type="button" data-zone="ocean" data-item="turtle" role="listitem">
+                <div class="tileEmoji">🐢</div><div class="tileName">Turtle</div><div class="tileHint">Tap</div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- PAGE: PARTY -->
+    <section class="page" id="page-party" aria-label="Party Planner page">
+      <div class="card">
+        <div class="moodRow">
+          <div class="pill">Parents + Kids</div>
+          <div class="pill soft">Booking Demo</div>
+        </div>
+
+        <h1 class="title">Birthday Party Planner</h1>
+        <p class="subtitle">Pick a theme, decor, add-ons. Save a booking summary (demo).</p>
+
+        <div class="partyGrid">
+          <div class="partyBox">
+            <h2 class="h2">1) Choose a theme</h2>
+            <div class="choiceGrid" role="list">
+              <button class="choice isSelected" type="button" data-choice="theme" data-value="Animals">Animals</button>
+              <button class="choice" type="button" data-choice="theme" data-value="Space">Space</button>
+              <button class="choice" type="button" data-choice="theme" data-value="Dinosaurs">Dinosaurs</button>
+              <button class="choice" type="button" data-choice="theme" data-value="Ocean">Ocean</button>
+              <button class="choice" type="button" data-choice="theme" data-value="Princess">Princess</button>
+              <button class="choice" type="button" data-choice="theme" data-value="Superheroes">Superheroes</button>
+            </div>
+          </div>
+
+          <div class="partyBox">
+            <h2 class="h2">2) Decor package</h2>
+            <div class="choiceGrid" role="list">
+              <button class="choice isSelected" type="button" data-choice="decor" data-value="Basic Decor">Basic Decor</button>
+              <button class="choice" type="button" data-choice="decor" data-value="Premium Decor">Premium Decor</button>
+              <button class="choice" type="button" data-choice="decor" data-value="Luxury Decor">Luxury Decor</button>
+            </div>
+
+            <div class="row2">
+              <label for="guests">Guests</label>
+              <input id="guests" type="number" min="5" max="100" value="20" />
+            </div>
+
+            <div class="row2">
+              <label for="date">Date</label>
+              <input id="date" type="date" />
+            </div>
+          </div>
+
+          <div class="partyBox">
+            <h2 class="h2">3) Add-ons</h2>
+            <label class="check"><input type="checkbox" id="addon-cake" checked /> Cake Table</label>
+            <label class="check"><input type="checkbox" id="addon-balloons" checked /> Balloon Arch</label>
+            <label class="check"><input type="checkbox" id="addon-games" /> Party Games Host</label>
+            <label class="check"><input type="checkbox" id="addon-photo" /> Photo Booth</label>
+
+            <div class="row2">
+              <label for="city">City</label>
+              <input id="city" type="text" placeholder="Ottawa" />
+            </div>
+          </div>
+
+          <div class="partyBox">
+            <h2 class="h2">Booking summary</h2>
+            <div class="summary" id="partySummary"></div>
+
+            <div class="buttons">
+              <button id="saveBookingBtn" type="button">Save Booking</button>
+              <button id="viewBookingBtn" type="button">View Saved</button>
+              <button id="clearBookingBtn" class="btn danger" type="button">Clear Saved</button>
+            </div>
+
+            <div class="status" id="partyStatus"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- PAGE: CHAT -->
+    <section class="page" id="page-chat" aria-label="Chat page">
+      <div class="card chatBox">
+        <h1 class="title">Chat (Local demo)</h1>
+        <p class="subtitle">A simple local chat view. Messages are stored in localStorage for this demo.</p>
+
+        <ul id="chatMessages" class="chatMessages" aria-live="polite"></ul>
+
+        <div class="chatInputRow">
+          <input id="chatName" class="chatInput" type="text" placeholder="Your name (optional)" style="max-width:180px" />
+          <input id="chatInput" class="chatInput" type="text" placeholder="Type a message…" />
+          <button id="sendChatBtn" class="buttons" type="button">Send</button>
+          <button id="clearChatBtn" class="btn small" type="button">Clear</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- KIDS MODAL -->
+  <div id="kzModal" class="modal hidden" aria-hidden="true">
+    <div class="modalCard" role="dialog" aria-modal="true" aria-label="Explorer details">
+      <div class="modalTop">
+        <div class="modalTitle" id="kzModalTitle">Item</div>
+        <button id="kzModalClose" class="miniBtn" type="button">Close</button>
+      </div>
+
+      <div class="media">
+        <div class="animBox">
+          <div class="animLabel">Animation</div>
+          <div id="kzAnimPlaceholder" class="animPlaceholder">
+            Loading…
+          </div>
+
+          <img id="kzGif" class="gif hidden" src="" alt="Animation" />
+          <video id="kzVideo" class="gif hidden" controls playsinline></video>
+        </div>
+
+        <div class="soundBox">
+          <div class="animLabel">Sound</div>
+          <div class="soundBtns">
+            <button id="kzPlaySound" class="kidBtn small" type="button">Play</button>
+            <button id="kzStopSound" class="kidBtn small outline" type="button">Stop</button>
+          </div>
+          <audio id="kzAudio" preload="auto"></audio>
+
+        </div>
+      </div>
+
+      <div class="facts">
+        <div class="factsHeader">Fun Facts</div>
+        <ul id="kzFacts" class="factsList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
