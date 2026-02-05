@@ -443,6 +443,63 @@
 
 /* ---------- KIDS ZONE: Videos & 3D Topics ---------- */
 (function kidsZoneInit() {
+  // Handle World Explorer category tabs (Animals, Space, Dinosaurs, Ocean)
+  const tabs = document.querySelectorAll(".kzTab");
+  const panels = document.querySelectorAll(".kzPanel");
+  const explorerTitle = document.getElementById("explorerTitle");
+  const closeExplorerBtn = document.getElementById("closeExplorerBtn");
+  const kidsExplorer = document.getElementById("kidsExplorer");
+  const kidsSoundToggle = document.getElementById("kidsSoundToggle");
+
+  const titleMap = {
+    animals: "🦁 Animal World Explorer",
+    space: "🚀 Space Explorer",
+    dinosaurs: "🦖 Dinosaur Explorer",
+    ocean: "🐙 Ocean Explorer"
+  };
+
+  // Tab click handler
+  tabs.forEach(tab => {
+    tab.addEventListener("click", function() {
+      const zone = this.getAttribute("data-zone");
+
+      // Hide all panels
+      panels.forEach(panel => panel.classList.add("hidden"));
+
+      // Show selected panel
+      const selectedPanel = document.querySelector(`.kzPanel[data-zone="${zone}"]`);
+      if (selectedPanel) selectedPanel.classList.remove("hidden");
+
+      // Update active tab styling
+      tabs.forEach(t => {
+        t.classList.remove("isActive");
+        t.setAttribute("aria-selected", "false");
+      });
+      this.classList.add("isActive");
+      this.setAttribute("aria-selected", "true");
+
+      // Update explorer title
+      if (explorerTitle) explorerTitle.textContent = titleMap[zone] || "Explorer";
+    });
+  });
+
+  // Close explorer button
+  if (closeExplorerBtn) {
+    closeExplorerBtn.addEventListener("click", () => {
+      if (kidsExplorer) kidsExplorer.classList.add("hidden");
+    });
+  }
+
+  // Sound toggle for explorer
+  let soundOn = true;
+  if (kidsSoundToggle) {
+    kidsSoundToggle.addEventListener("click", () => {
+      soundOn = !soundOn;
+      kidsSoundToggle.textContent = soundOn ? "Sound: On" : "Sound: Off";
+      kidsSoundToggle.setAttribute("aria-pressed", soundOn);
+    });
+  }
+
   const videoGrid = document.getElementById("videoGrid");
   const threeGrid = document.getElementById("threeGrid");
   const modal = document.getElementById("kzModal");
