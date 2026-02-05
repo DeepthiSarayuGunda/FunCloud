@@ -176,45 +176,283 @@
   onNewQuote();
 })();
 
-/* ---------- KIDS ZONE: Story Books, Videos, 3D Topics ---------- */
+/* ---------- STORY BOOKS: Advanced 3D-like with Parallax & Three.js ---------- */
+(function storyBooksInit() {
+  const STORY_KEY = "funcloud_story_v1";
+  const storyBooksGrid = document.getElementById("storyBooks");
+  const storyReaderModal = document.getElementById("storyReaderModal");
+  if (!storyBooksGrid || !storyReaderModal) return;
+
+  let currentStory = null;
+  let currentPageIndex = 0;
+  let soundOn = true;
+  let use3DMode = false;
+  let threeScene = null;
+
+  // Initialize Story Books Grid
+  if (typeof STORIES !== 'undefined') {
+    STORIES.forEach((story, idx) => {
+      const card = document.createElement("button");
+      card.className = "storyBookCard";
+      card.innerHTML = `<div class="storyBookEmoji">${story.emoji}</div><div class="storyBookTitle">${story.title}</div><div class="storyBookDesc">${story.description}</div>`;
+      card.addEventListener("click", () => openStory(story));
+      storyBooksGrid.appendChild(card);
+    });
+  }
+
+  function saveProgress() {
+    const progress = { lastStory: currentStory?.id, lastPage: currentPageIndex, soundOn, use3DMode };
+    localStorage.setItem(STORY_KEY, JSON.stringify(progress));
+  }
+
+  function loadProgress() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORY_KEY)) || {};
+      soundOn = saved.soundOn !== false;
+      use3DMode = saved.use3DMode === true;
+      updateUI();
+    } catch (e) {}
+  }
+
+  function playSound() {
+    if (!soundOn) return;
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 800;
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.2);
+    } catch (e) {}
+  }
+
+  function createSparkles(x, y, count = 12) {
+    const container = document.getElementById("sparkleContainer");
+    if (!container) return;
+    for (let i = 0; i < count; i++) {
+      const sparkle = document.createElement("div");
+      sparkle.className = "sparkle";
+      const angle = (i / count) * Math.PI * 2;
+      const distance = 60 + Math.random() * 40;
+      const tx = Math.cos(angle) * distance;
+      const ty = Math.sin(angle) * distance;
+      sparkle.style.left = x + "px";
+      sparkle.style.top = y + "px";
+      sparkle.style.setProperty("--tx", tx + "px");
+      sparkle.style.setProperty("--ty", ty + "px");
+      sparkle.textContent = "✨";
+      sparkle.style.fontSize = "16px";
+      container.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 1500);
+    }
+  }
+
+  function handleParallax(event) {
+    const stage = document.getElementById("storyParallaxStage");
+    if (!stage || use3DMode) return;
+    const rect = stage.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const x = event.clientX - rect.left || event.touches?.[0].clientX - rect.left || centerX;
+    const y = event.clientY - rect.top || event.touches?.[0].clientY - rect.top || centerY;
+    const rotX = ((y - centerY) / centerY) * 8;
+    const rotY = ((x - centerX) / centerX) * 8;
+
+    const bgLayer = document.getElementById("storyBgLayer");
+    const charLayer = document.getElementById("storyCharLayer");
+    const fgLayer = document.getElementById("storyFgLayer");
+
+    if (bgLayer) bgLayer.style.transform = `rotateX(${rotX * 0.5}deg) rotateY(${rotY * 0.5}deg) translateZ(-30px)`;
+    if (charLayer) charLayer.style.transform = `rotateX(${rotX * 0.7}deg) rotateY(${rotY * 0.7}deg) translateZ(20px)`;
+    if (fgLayer) fgLayer.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(-15px)`;
+  }
+
+  function handleCharacterTap(e) {
+    if (use3DMode) return;
+    playSound();
+    const charLayer = document.getElementById("storyCharLayer");
+    if (charLayer) {
+      charLayer.classList.remove("jump");
+      charLayer.classList.remove("glow");
+      void charLayer.offsetWidth;
+      charLayer.classList.add("jump", "glow");
+      const rect = charLayer.getBoundingClientRect();
+      createSparkles(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    }
+  }
+
+  function updateUI() {
+    const toggle3DBtn = document.getElementById("storyToggle3D");
+    const toggleSoundBtn = document.getElementById("storyToggleSound");
+
+    if (toggle3DBtn) {
+      toggle3DBtn.textContent = use3DMode ? "📖 2D" : "🎯 3D";
+      toggle3DBtn.classList.toggle("active", use3DMode);
+    }
+    if (toggleSoundBtn) {
+      toggleSoundBtn.textContent = soundOn ? "🔊 On" : "🔇 Off";
+      toggleSoundBtn.classList.toggle("active", soundOn);
+    }
+  }
+
+  function init3DScene() {
+    if (threeScene) threeScene.renderer.dispose();
+    const container = document.getElementById("storyScene3D");
+    if (!container) return;
+    container.innerHTML = "";
+
+    try {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setClearColor(0xe0f4ff, 0.5);
+      container.appendChild(renderer.domElement);
+
+      const page = currentStory.pages[currentPageIndex];
+      const geom = new THREE.IcosahedronGeometry(2, 4);
+      const mat = new THREE.MeshPhongMaterial({ color: 0xa78bfa, shininess: 100 });
+      const mesh = new THREE.Mesh(geom, mat);
+      scene.add(mesh);
+
+      const light1 = new THREE.DirectionalLight(0xffffff, 0.8);
+      light1.position.set(5, 5, 5);
+      scene.add(light1);
+      const light2 = new THREE.PointLight(0x667eea, 0.6);
+      light2.position.set(-5, 5, 5);
+      scene.add(light2);
+
+      camera.position.z = 5;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        mesh.rotation.x += 0.005;
+        mesh.rotation.y += 0.008;
+        mesh.position.y = Math.sin(Date.now() * 0.001) * 0.5;
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      threeScene = { renderer, scene, camera, mesh };
+    } catch (e) {
+      container.innerHTML = '<div style="color:#999; padding:20px; text-align:center;">WebGL not available</div>';
+    }
+  }
+
+  function renderPage() {
+    const page = currentStory.pages[currentPageIndex];
+    const numPages = currentStory.pages.length;
+    saveProgress();
+
+    // Update text and indicator
+    document.getElementById("storyPageText").textContent = page.text;
+    document.getElementById("pageIndicator").textContent = `Page ${currentPageIndex + 1} of ${numPages}`;
+
+    // Update AI prompt
+    const aiPromptText = document.getElementById("aiPromptText");
+    if (aiPromptText) aiPromptText.textContent = `✨ ${page.aiPrompt}`;
+
+    // Update layers (parallax)
+    const bgLayer = document.getElementById("storyBgLayer");
+    const charLayer = document.getElementById("storyCharLayer");
+    const fgLayer = document.getElementById("storyFgLayer");
+
+    if (bgLayer) bgLayer.textContent = page.imageSlots?.background || "🌌";
+    if (charLayer) charLayer.textContent = page.imageSlots?.character || "🦋";
+    if (fgLayer) fgLayer.textContent = page.imageSlots?.foreground || "⭐";
+
+    // Remove jump/glow
+    if (charLayer) {
+      charLayer.classList.remove("jump", "glow");
+    }
+
+    // Toggle 3D based on page flag
+    const storyParallax = document.getElementById("storyParallaxStage");
+    const storyScene3D = document.getElementById("storyScene3D");
+    const shouldUse3D = page.use3D && use3DMode;
+
+    if (storyParallax) storyParallax.classList.toggle("hidden", shouldUse3D);
+    if (storyScene3D) storyScene3D.classList.toggle("hidden", !shouldUse3D);
+
+    if (shouldUse3D) init3DScene();
+
+    // Update buttons
+    document.getElementById("storyPrevBtn").disabled = currentPageIndex === 0;
+    document.getElementById("storyNextBtn").disabled = currentPageIndex === numPages - 1;
+  }
+
+  function openStory(story) {
+    currentStory = story;
+    currentPageIndex = 0;
+    storyReaderModal.classList.remove("hidden");
+    storyReaderModal.setAttribute("aria-hidden", "false");
+    document.getElementById("storyTitle").textContent = story.title;
+
+    // Parallax listeners
+    const stage = document.getElementById("storyParallaxStage");
+    if (stage) {
+      stage.addEventListener("mousemove", handleParallax);
+      stage.addEventListener("touchmove", handleParallax);
+      stage.addEventListener("click", handleCharacterTap);
+      stage.addEventListener("touchstart", handleCharacterTap);
+    }
+
+    // Button listeners
+    document.getElementById("storyNextBtn").onclick = () => { if (currentPageIndex < story.pages.length - 1) { currentPageIndex++; renderPage(); } };
+    document.getElementById("storyPrevBtn").onclick = () => { if (currentPageIndex > 0) { currentPageIndex--; renderPage(); } };
+
+    document.getElementById("storyToggle3D").onclick = () => {
+      use3DMode = !use3DMode;
+      saveProgress();
+      updateUI();
+      renderPage();
+    };
+
+    document.getElementById("storyToggleSound").onclick = () => {
+      soundOn = !soundOn;
+      saveProgress();
+      updateUI();
+    };
+
+    document.getElementById("storyReaderClose").onclick = closeStory;
+
+    renderPage();
+    updateUI();
+  }
+
+  function closeStory() {
+    const stage = document.getElementById("storyParallaxStage");
+    if (stage) {
+      stage.removeEventListener("mousemove", handleParallax);
+      stage.removeEventListener("touchmove", handleParallax);
+      stage.removeEventListener("click", handleCharacterTap);
+    }
+    if (threeScene) threeScene.renderer.dispose();
+    storyReaderModal.classList.add("hidden");
+    storyReaderModal.setAttribute("aria-hidden", "true");
+  }
+
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !storyReaderModal.classList.contains("hidden")) closeStory(); });
+
+  loadProgress();
+})();
+
+/* ---------- KIDS ZONE: Videos & 3D Topics ---------- */
 (function kidsZoneInit() {
+  const videoGrid = document.getElementById("videoGrid");
+  const threeGrid = document.getElementById("threeGrid");
   const modal = document.getElementById("kzModal");
   if (!modal) return;
 
-  const storyBook = document.getElementById("storyBooks");
-  const videoGrid = document.getElementById("videoGrid");
-  const threeGrid = document.getElementById("threeGrid");
   const modalTitle = document.getElementById("kzModalTitle");
   const modalClose = document.getElementById("kzModalClose");
   const modalContent = document.getElementById("modalContent");
 
   function closeModal() { modal.classList.add("hidden"); modal.setAttribute("aria-hidden", "true"); }
-
-  function openStoryBook(story) {
-    modal.classList.remove("hidden");
-    let currentPage = 0;
-    function renderPage() {
-      const page = story.pages[currentPage];
-      const numPages = story.pages.length;
-      const html = `<div class="storyReader">
-        <h3>${story.title}</h3>
-        <div class="storyPage">
-          <div class="pageImage">${page.image || "📖"}</div>
-          <div class="pageContent">${page.text}</div>
-          <div class="pageProgress">Page ${currentPage + 1} of ${numPages}</div>
-        </div>
-        <div class="storyControls">
-          ${currentPage > 0 ? '<button class="btn small" id="prevBtn">← Previous</button>' : ''}
-          ${currentPage < numPages - 1 ? '<button class="btn small" id="nextBtn">Next →</button>' : ''}
-        </div>
-      </div>`;
-      modalContent.innerHTML = html;
-      document.getElementById("nextBtn")?.addEventListener("click", () => { currentPage++; renderPage(); });
-      document.getElementById("prevBtn")?.addEventListener("click", () => { currentPage--; renderPage(); });
-    }
-    modalTitle.textContent = story.title;
-    renderPage();
-  }
 
   function openVideo(video) {
     modal.classList.remove("hidden");
@@ -247,16 +485,6 @@
     }
     modalTitle.textContent = topic.title;
     renderFact();
-  }
-
-  if (storyBook && typeof STORIES !== 'undefined') {
-    STORIES.forEach(story => {
-      const card = document.createElement("button");
-      card.className = "storyBook";
-      card.innerHTML = `<div class="bookCover">${story.emoji}</div><div class="bookTitle">${story.title}</div><div class="bookPages">${story.pages.length} pages</div>`;
-      card.addEventListener("click", () => openStoryBook(story));
-      storyBook.appendChild(card);
-    });
   }
 
   if (videoGrid && typeof VIDEOS !== 'undefined') {

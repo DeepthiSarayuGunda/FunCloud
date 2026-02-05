@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FunCloud</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
 </head>
 <body>
  <header class="topbar">
@@ -272,6 +273,45 @@
       <div class="facts">
         <div class="factsHeader">Fun Facts</div>
         <ul id="kzFacts" class="factsList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY READER MODAL -->
+  <div id="storyReaderModal" class="modal hidden" aria-hidden="true">
+    <div class="modalCard storyReaderCard" role="dialog" aria-modal="true" aria-label="Story Reader">
+      <div class="storyReaderTop">
+        <div class="storyReaderTitle" id="storyTitle">Story Title</div>
+        <div class="storyReaderControls">
+          <button id="storyToggle3D" class="miniBtn" type="button" title="Toggle 3D Mode">🎯 3D</button>
+          <button id="storyToggleSound" class="miniBtn" type="button" title="Toggle Sound">🔊 Sound</button>
+          <button id="storyReaderClose" class="miniBtn" type="button">✕</button>
+        </div>
+      </div>
+
+      <!-- Parallax Stage (Default View) -->
+      <div id="storyParallaxStage" class="parallax-stage">
+        <div class="parallax-layer parallax-background" id="storyBgLayer"></div>
+        <div class="parallax-layer parallax-character" id="storyCharLayer"></div>
+        <div class="parallax-layer parallax-foreground" id="storyFgLayer"></div>
+        <div class="sparkle-container" id="sparkleContainer"></div>
+      </div>
+
+      <!-- 3D Scene Container (Hidden by default) -->
+      <div id="storyScene3D" class="story-scene-3d hidden"></div>
+
+      <!-- Story Text & Navigation -->
+      <div class="storyReaderBottom">
+        <div class="storyPageText" id="storyPageText">Loading story...</div>
+        <div class="storyPageNav">
+          <button id="storyPrevBtn" class="btn small" type="button">← Previous</button>
+          <div class="pageIndicator" id="pageIndicator">Page 1 of 6</div>
+          <button id="storyNextBtn" class="btn small" type="button">Next →</button>
+        </div>
+        <div id="storyAiPrompt" class="story-ai-prompt">
+          <span class="ai-icon">✨</span>
+          <span id="aiPromptText">AI Prompt: Loading...</span>
+        </div>
       </div>
     </div>
   </div>
