@@ -1,0 +1,13 @@
+version: 1
+frontend:
+  phases:
+    # No build phase needed - this is a static site
+    build:
+      commands:
+        - echo "Static site deployment - no build required"
+  artifacts:
+    baseDirectory: frontend
+    files:
+      - '**/*'
+  cache:
+    paths: []
