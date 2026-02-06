@@ -1,4 +1,11 @@
 // Premium FunCloud - All Modules
+import { askLLM } from "./ollama.js";
+
+/* ---------- Ollama Test Hook ---------- */
+async function testOllama() {
+  const result = await askLLM("Write one short happy sentence for kids.");
+  alert(result);
+}
 
 /* ---------- Navigation ---------- */
 (function navInit() {
