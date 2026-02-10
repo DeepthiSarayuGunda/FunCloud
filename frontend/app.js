@@ -1,6 +1,27 @@
 // Premium FunCloud - All Modules
 import { askLLM } from "./ollama.js";
 
+/* ---------- PARTY DECOR & VENDORS DATA ---------- */
+
+const DECOR_CATALOG = [
+  { id: "balloons", name: "Balloon Set", price: "$40–$120", img: "assets/party/balloons.jpg" },
+  { id: "backdrop", name: "Backdrop Panel", price: "$80–$250", img: "assets/party/backdrop.jpg" },
+  { id: "arch", name: "Balloon Arch", price: "$150–$450", img: "assets/party/arches.jpg" },
+  { id: "table", name: "Table Decor", price: "$35–$150", img: "assets/party/table-decor.jpg" },
+  { id: "cake", name: "Cake Toppers", price: "$10–$45", img: "assets/party/cake-toppers.jpg" },
+  { id: "neon", name: "Neon Sign", price: "$120–$350", img: "assets/party/neon-sign.jpg" },
+  { id: "photo", name: "Photo Booth Props", price: "$25–$90", img: "assets/party/photo-booth.jpg" },
+  { id: "favors", name: "Party Favors", price: "$20–$100", img: "assets/party/party-favors.jpg" }
+];
+
+const OTTAWA_VENDORS = [
+  { id: "capital", name: "Capital Balloons Co.", specialty: "Balloon Garlands", link: "https://instagram.com" },
+  { id: "byward", name: "ByWard Backdrops", specialty: "Backdrops & Neon", link: "https://example.com" },
+  { id: "rideau", name: "Rideau Party Rentals", specialty: "Tables & Decor", link: "https://example.com" },
+  { id: "photoFun", name: "Ottawa Photo Fun", specialty: "Photo Booths", link: "https://instagram.com" }
+];
+
+
 /* ---------- Ollama Test Hook ---------- */
 async function testOllama() {
   const result = await askLLM("Write one short happy sentence for kids.");
@@ -518,6 +539,38 @@ async function testOllama() {
 
   function closeModal() { modal.classList.add("hidden"); modal.setAttribute("aria-hidden", "true"); }
 
+  // Track currently opened item topic for audio controls
+  let currentItemTopic = null;
+
+  // Enhanced closeModal: also stop any playing audio/synth
+  function stopSynth() {
+    try {
+      if (window._kz_synth && window._kz_synth.osc) {
+        window._kz_synth.osc.stop();
+        window._kz_synth.gain.disconnect();
+        window._kz_synth = null;
+      }
+      if (window._kz_synth_timeout) { clearTimeout(window._kz_synth_timeout); window._kz_synth_timeout = null; }
+    } catch (e) { /* ignore */ }
+  }
+
+  function stopSoundPlayback() {
+    try {
+      const audioEl = document.getElementById('kzAudio');
+      if (audioEl && !audioEl.paused) {
+        audioEl.pause();
+        audioEl.currentTime = 0;
+      }
+    } catch (e) {}
+    stopSynth();
+  }
+
+  function closeModalAndStop() {
+    stopSoundPlayback();
+    modal.classList.add("hidden");
+    modal.setAttribute("aria-hidden", "true");
+  }
+
   function openVideo(video) {
     modal.classList.remove("hidden");
     modalContent.innerHTML = `<div class="videoPlayer">
@@ -551,6 +604,216 @@ async function testOllama() {
     renderFact();
   }
 
+  // Items data: emoji, title, facts, optional sound (assets optional)
+  const itemsData = {
+    animals: {
+      lion: { emoji: '🦁', title: 'Lion', facts: [
+        'Lions live in groups called prides.',
+        'A lion’s roar can be heard up to 5 miles away.',
+        'Male lions often have manes to look bigger and protect their necks.'
+      ], sound: '/assets/sounds/lion.mp3' },
+      elephant: { emoji: '🐘', title: 'Elephant', facts: [
+        'Elephants can smell water from miles away.',
+        'They use their trunks to breathe, smell, drink, and grab things.',
+        'Elephants are very social and remember friends for years.'
+      ], sound: '/assets/sounds/elephant.mp3' },
+      dolphin: { emoji: '🐬', title: 'Dolphin', facts: [
+        'Dolphins are very smart and can use tools.',
+        'They talk to each other using clicks and whistles.',
+        'Dolphins sleep with one eye open to watch for danger.'
+      ], sound: '/assets/sounds/dolphin.mp3' },
+      tiger: { emoji: '🐯', title: 'Tiger', facts: [
+        'Tigers have striped skin as well as striped fur.',
+        'They are powerful swimmers and love water.',
+        'Each tiger’s stripe pattern is unique, like a fingerprint.'
+      ] },
+      monkey: { emoji: '🐒', title: 'Monkey', facts: [
+        'Monkeys use their tails to help balance.',
+        'Some monkeys make and use simple tools.',
+        'They live in troops and help each other find food.'
+      ] },
+      penguin: { emoji: '🐧', title: 'Penguin', facts: [
+        'Penguins cannot fly but are excellent swimmers.',
+        'They huddle together to keep warm in cold weather.',
+        'Penguins eat fish, squid, and krill.'
+      ] }
+    },
+    space: {
+      rocket: { emoji: '🚀', title: 'Rocket', facts: [
+        'Rockets go into space by burning fuel really fast.',
+        'Satellites help us with phones, GPS, and weather forecasts.',
+        'Astronauts train for years before going to space.'
+      ] },
+      planet: { emoji: '🪐', title: 'Planet', facts: [
+        'Planets orbit stars like the Sun.',
+        'Some planets have rings made of ice and rock.',
+        'Planets can be gas giants or rocky worlds.'
+      ] },
+      astronaut: { emoji: '🧑‍🚀', title: 'Astronaut', facts: [
+        'Astronauts wear special suits to breathe in space.',
+        'They float because there is microgravity in orbit.',
+        'Astronauts grow slightly taller in space!' ], sound: '/assets/sounds/astronaut.mp3' },
+      comet: { emoji: '☄️', title: 'Comet', facts: [
+        'Comets are made of ice, rock, and dust.',
+        'When they get close to the Sun they grow glowing tails.',
+        'Some comets return to the inner solar system every few years.'
+      ] },
+      satellite: { emoji: '🛰️', title: 'Satellite', facts: [
+        'Satellites orbit the Earth and send us information.',
+        'Some satellites take pictures of our planet from space.',
+        'We use satellites for communication and navigation.'
+      ] },
+      moon: { emoji: '🌕', title: 'Moon', facts: [
+        'The Moon controls the tides on Earth.',
+        'People have walked on the Moon during Apollo missions.',
+        'The Moon is covered in dusty soil called regolith.'
+      ] }
+    },
+    dinosaurs: {
+      trex: { emoji: '🦖', title: 'T-Rex', facts: [
+        'T-Rex had very strong jaws and big teeth.',
+        'It lived millions of years ago during the Cretaceous period.',
+        'Scientists think it could run fast for short distances.'
+      ] },
+      sauropod: { emoji: '🦕', title: 'Sauropod', facts: [
+        'Sauropods were huge and had long necks to eat leaves high in trees.',
+        'Some sauropods were as tall as a three-story building.',
+        'They likely moved in herds for safety.'
+      ] },
+      egg: { emoji: '🥚', title: 'Dino Egg', facts: [
+        'Dinosaurs hatched from eggs like birds and reptiles.',
+        'Some dinosaur eggs were as big as a basketball or larger.',
+        'Fossilized eggs help scientists learn about dinosaur families.'
+      ] },
+      triceratops: { emoji: '🦕', title: 'Triceratops', facts: [
+        'Triceratops had three big horns on its face.',
+        'They used their horns to protect themselves from predators.',
+        'They were plant-eaters with strong beaks.'
+      ] },
+      velociraptor: { emoji: '🦖', title: 'Velociraptor', facts: [
+        'Velociraptors were fast and clever hunters.',
+        'They were about the size of a turkey, not huge like in movies.',
+        'They may have had feathers like birds.'
+      ] },
+      brachiosaurus: { emoji: '🦕', title: 'Brachiosaurus', facts: [
+        'Brachiosaurus had very long necks to reach tall trees.',
+        'They were herbivores and ate lots of plants.',
+        'Their front legs were longer than their back legs.'
+      ] }
+    },
+    ocean: {
+      shark: { emoji: '🦈', title: 'Shark', facts: [
+        'Sharks have been around longer than dinosaurs.',
+        'Some sharks can detect tiny amounts of blood in water.',
+        'Sharks come in many sizes, from small to huge.'
+      ] },
+      octopus: { emoji: '🐙', title: 'Octopus', facts: [
+        'Octopuses have three hearts and blue blood.',
+        'They can change color to hide from predators.',
+        'Octopuses are very clever and use tools sometimes.'
+      ] },
+      turtle: { emoji: '🐢', title: 'Turtle', facts: [
+        'Some sea turtles migrate thousands of miles.',
+        'Turtles have shells that protect them from danger.',
+        'Many turtles lay eggs on sandy beaches.'
+      ] },
+      whale: { emoji: '🐋', title: 'Whale', facts: [
+        'Whales are the largest animals on Earth.',
+        'Some whales sing complex songs to talk to each other.',
+        'They eat tiny animals called krill or big fish depending on the species.'
+      ] },
+      seahorse: { emoji: '🦄', title: 'Seahorse', facts: [
+        'Male seahorses carry and give birth to the babies.',
+        'Seahorses anchor themselves with their tails to avoid drifting.',
+        'They are small and have a horse-like head shape.'
+      ] },
+      jellyfish: { emoji: '🪼', title: 'Jellyfish', facts: [
+        'Jellyfish can glow in the dark in some places.',
+        'They drift with ocean currents and don’t have brains like we do.',
+        'Some jellyfish stings can hurt, so be careful at the beach.'
+      ] }
+    }
+  };
+
+  // Attach click handlers for all kzItem tiles
+  document.querySelectorAll('.kzItem').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const zone = btn.getAttribute('data-zone');
+      const item = btn.getAttribute('data-item');
+      const topic = (itemsData[zone] && itemsData[zone][item]) || { emoji: '❓', title: item || 'Item', facts: ['No facts available.'] };
+      currentItemTopic = topic;
+      try {
+        openThreeTopic(topic);
+      } catch (err) {
+        console.error('Failed to open item modal:', err);
+      }
+
+      // Optional sound play if available (initial autoplay attempt)
+      try {
+        const audioEl = document.getElementById('kzAudio');
+        if (topic.sound && soundOn && audioEl) {
+          audioEl.src = topic.sound;
+          const p = audioEl.play();
+          if (p && p.catch) p.catch(() => {});
+        }
+      } catch (err) {
+        // Don't let sound errors break the UI
+        console.warn('Sound play failed:', err);
+      }
+    });
+  });
+
+  // Wire play/stop buttons
+  const playBtn = document.getElementById('kzPlaySound');
+  const stopBtn = document.getElementById('kzStopSound');
+  const audioEl = document.getElementById('kzAudio');
+
+  async function playCurrentSound() {
+    if (!currentItemTopic) return;
+    const src = currentItemTopic.sound;
+    if (src && audioEl) {
+      try {
+        audioEl.src = src;
+        await audioEl.play();
+      } catch (e) { console.warn('Audio play failed', e); }
+      return;
+    }
+
+    // Fallback: simple beep via WebAudio
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!window._kz_audio_ctx) window._kz_audio_ctx = new AudioCtx();
+      const ctx = window._kz_audio_ctx;
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.value = 440;
+      o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.02);
+      o.start();
+      window._kz_synth = { osc: o, gain: g };
+      window._kz_synth_timeout = setTimeout(() => { stopSynth(); }, 2000);
+    } catch (e) { console.warn('Synth failed', e); }
+  }
+
+  function stopCurrentSound() {
+    try {
+      if (audioEl && !audioEl.paused) {
+        audioEl.pause(); audioEl.currentTime = 0;
+      }
+    } catch (e) { }
+    stopSynth();
+  }
+
+  if (playBtn) playBtn.addEventListener('click', () => { playCurrentSound(); });
+  if (stopBtn) stopBtn.addEventListener('click', () => { stopCurrentSound(); });
+
+  // Ensure closing modal stops audio
+  if (modalClose) modalClose.addEventListener('click', closeModalAndStop);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModalAndStop(); });
+  document.addEventListener('keydown', (e) => { if (e.key === "Escape") closeModalAndStop(); });
+
   if (videoGrid && typeof VIDEOS !== 'undefined') {
     VIDEOS.forEach(video => {
       const card = document.createElement("button");
@@ -583,11 +846,20 @@ async function testOllama() {
 
   const PARTY_KEY = "funcloud_party_v1";
   let step = 1;
-  const state = { type: null, theme: null, guests: 15, budget: "medium" };
+  const state = {
+  type: null,
+  theme: null,
+  guests: 15,
+  budget: "medium",
+  decor: [],
+  vendor: null
+};
+
 
   function saveState() { localStorage.setItem(PARTY_KEY, JSON.stringify(state)); }
   function renderWizard() {
-    let html = `<div class="wizard-progress"><div class="wizard-bar" style="width: ${(step / 5) * 100}%"></div></div>`;
+    const TOTAL_STEPS = 7;
+    let html = `<div class="wizard-progress"><div class="wizard-bar" style="width: ${(step / TOTAL_STEPS) * 100}%"></div></div>`;
 
     if (step === 1) {
       html += `<div class="wizard-step"><div class="step-header"><div class="step-title">🎉 Step 1: Party Type</div><div class="step-subtitle">What kind of party?</div></div><div class="choiceGrid" id="typeChoices">`;
@@ -604,12 +876,45 @@ async function testOllama() {
         });
       });
       document.getElementById("nextBtn").addEventListener("click", () => { if (state.type) { step = 2; renderWizard(); } });
+
     } else if (step === 2) {
-      const themes = (typeof PARTY_PLANNER !== 'undefined' && state.type) ? PARTY_PLANNER.themes[state.type] || [] : [];
-      html += `<div class="wizard-step"><div class="step-header"><div class="step-title">🎨 Step 2: Theme</div><div class="step-subtitle">Pick a theme</div></div><div class="choiceGrid" id="themeChoices">`;
-      themes.forEach(t => { html += `<button class="choice ${state.theme === t ? 'isSelected' : ''}">${t}</button>`; });
-      html += `</div><div class="step-buttons"><button class="btn small" id="backBtn">Back</button><button class="btn" id="nextBtn">Next</button></div></div>`;
+      // Location & Theme
+      const locations = [
+        "Mooney's Bay Park",
+        "Andrew Haydon Park",
+        "Vincent Massey Park",
+        "Lansdowne Park",
+        "Britannia Beach",
+        "Museum of Nature (nearby)",
+        "Local community center"
+      ];
+
+      // Themes - include wider set and emoji placeholders
+      const themeChoices = ["Princess", "Superheroes", "Dino", "Space", "Unicorn", "Ocean", "Sports", "Minecraft", "Paw Patrol"];
+
+      html += `<div class="wizard-step"><div class="step-header"><div class="step-title">📍 Step 2: Location & Theme</div><div class="step-subtitle">Choose a location and theme</div></div>`;
+      // Locations
+      html += `<div class="plan-section"><div class="plan-header">📌 Locations (Ottawa)</div><div class="choiceGrid" id="locationChoices">`;
+      locations.forEach(loc => { html += `<button class="choice ${state.location === loc ? 'isSelected' : ''}">${loc}</button>`; });
+      html += `</div></div>`;
+
+      // Themes with emoji tiles
+      html += `<div class="plan-section"><div class="plan-header">🎭 Theme / Decor</div><div class="choiceGrid" id="themeChoices">`;
+      const themeEmojiMap = { Princess: '👑', Superheroes: '🦸‍♂️', Dino: '🦕', Space: '🚀', Unicorn: '🦄', Ocean: '🌊', Sports: '🏀', Minecraft: '🪓', 'Paw Patrol': '🐶' };
+      themeChoices.forEach(t => { html += `<button class="choice ${state.theme === t ? 'isSelected' : ''}"><div style="font-size:20px">${themeEmojiMap[t] || '🎨'}</div><div style="font-size:12px; margin-top:6px">${t}</div></button>`; });
+      html += `</div></div>`;
+
+      html += `<div class="step-buttons"><button class="btn small" id="backBtn">Back</button><button class="btn" id="nextBtn">Next</button></div></div>`;
       wizardEl.innerHTML = html;
+
+      document.querySelectorAll("#locationChoices .choice").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          state.location = e.target.textContent;
+          document.querySelectorAll("#locationChoices .choice").forEach(b => b.classList.remove("isSelected"));
+          e.target.classList.add("isSelected");
+        });
+      });
+
       document.querySelectorAll("#themeChoices .choice").forEach(btn => {
         btn.addEventListener("click", (e) => {
           state.theme = e.target.textContent;
@@ -617,8 +922,10 @@ async function testOllama() {
           e.target.classList.add("isSelected");
         });
       });
-      document.getElementById("nextBtn").addEventListener("click", () => { if (state.theme) { step = 3; renderWizard(); } });
+
+      document.getElementById("nextBtn").addEventListener("click", () => { step = 3; renderWizard(); });
       document.getElementById("backBtn").addEventListener("click", () => { step = 1; renderWizard(); });
+
     } else if (step === 3) {
       html += `<div class="wizard-step"><div class="step-header"><div class="step-title">👥 Step 3: Guests</div><div class="step-subtitle">Count: ${state.guests}</div></div><input type="range" min="5" max="200" value="${state.guests}" id="guestSlider" style="width:100%; cursor:pointer;"><div class="step-buttons"><button class="btn small" id="backBtn">Back</button><button class="btn" id="nextBtn">Next</button></div></div>`;
       wizardEl.innerHTML = html;
@@ -628,12 +935,13 @@ async function testOllama() {
       });
       document.getElementById("nextBtn").addEventListener("click", () => { step = 4; renderWizard(); });
       document.getElementById("backBtn").addEventListener("click", () => { step = 2; renderWizard(); });
+
     } else if (step === 4) {
       html += `<div class="wizard-step"><div class="step-header"><div class="step-title">💰 Step 4: Budget</div><div class="step-subtitle">Choose budget</div></div><div class="choiceGrid" id="budgetChoices">
         <button class="choice ${state.budget === 'low' ? 'isSelected' : ''}">💚 Low</button>
         <button class="choice ${state.budget === 'medium' ? 'isSelected' : ''}">💛 Medium</button>
         <button class="choice ${state.budget === 'high' ? 'isSelected' : ''}">❤️ High</button>
-      </div><div class="step-buttons"><button class="btn small" id="backBtn">Back</button><button class="btn" id="nextBtn">Generate!</button></div></div>`;
+      </div><div class="step-buttons"><button class="btn small" id="backBtn">Back</button><button class="btn" id="nextBtn">Next</button></div></div>`;
       wizardEl.innerHTML = html;
       document.querySelectorAll("#budgetChoices .choice").forEach((btn, idx) => {
         btn.addEventListener("click", () => {
@@ -644,21 +952,110 @@ async function testOllama() {
       });
       document.getElementById("nextBtn").addEventListener("click", () => { step = 5; renderWizard(); });
       document.getElementById("backBtn").addEventListener("click", () => { step = 3; renderWizard(); });
+} else if (step === 5) {
+  // Decor & Vendors (Ottawa)
+
+  html += `
+  <div class="wizard-step">
+    <div class="step-header">
+      <div class="step-title">🎨 Step 5: Decor & Vendors (Ottawa)</div>
+      <div class="step-subtitle">Choose decor items and one vendor</div>
+    </div>
+
+    <div class="plan-section">
+      <div class="plan-header">Decor</div>
+      <div class="choiceGrid">
+        ${DECOR_CATALOG.map(d => `
+          <button class="choice ${state.decor.includes(d.id) ? 'isSelected' : ''}" data-decor="${d.id}">
+            <img src="${d.img}" style="width:100%;height:80px;object-fit:cover;border-radius:8px">
+            <div>${d.name}</div>
+            <small>${d.price}</small>
+          </button>
+        `).join("")}
+      </div>
+    </div>
+
+    <div class="plan-section">
+      <div class="plan-header">Ottawa Vendors</div>
+      <div class="choiceGrid">
+        ${OTTAWA_VENDORS.map(v => `
+          <button class="choice ${state.vendor === v.id ? 'isSelected' : ''}" data-vendor="${v.id}">
+            <strong>${v.name}</strong><br>
+            <small>${v.specialty}</small>
+          </button>
+        `).join("")}
+      </div>
+    </div>
+
+    <div class="step-buttons">
+      <button class="btn small" id="backBtn">Back</button>
+      <button class="btn" id="nextBtn">Next</button>
+    </div>
+  </div>`;
+
+  wizardEl.innerHTML = html;
+
+  document.querySelectorAll("[data-decor]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.decor;
+      state.decor = state.decor.includes(id)
+        ? state.decor.filter(d => d !== id)
+        : [...state.decor, id];
+      renderWizard();
+    });
+  });
+
+  document.querySelectorAll("[data-vendor]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.vendor = btn.dataset.vendor;
+      renderWizard();
+    });
+  });
+
+  document.getElementById("nextBtn").onclick = () => { step = 6; renderWizard(); };
+  document.getElementById("backBtn").onclick = () => { step = 4; renderWizard(); };
+
     } else if (step === 5) {
+      // Review & Shopping list
       saveState();
-      const checklist = typeof PARTY_PLANNER !== 'undefined' ? PARTY_PLANNER.checklists.birthday : [];
-      const timeline = typeof PARTY_PLANNER !== 'undefined' ? PARTY_PLANNER.timelines.afternoon : [];
+      const shopping = [
+        'balloons', 'banner', 'plates/cups', 'table cover', 'party hats', 'cake topper', 'loot bags', 'themed backdrop'
+      ];
       html += `<div class="wizard-step plan-output animate-fade">
-        <div class="step-header"><div class="step-title">🎊 Your Party Plan</div></div>
-        <div class="plan-section"><div class="plan-header">📋 Details</div><div style="font-size:13px;">Type: <strong>${state.type}</strong> | Theme: <strong>${state.theme}</strong> | Guests: <strong>${state.guests}</strong> | Budget: <strong>${state.budget}</strong></div></div>
-        <div class="plan-section"><div class="plan-header">✓ Checklist</div><ul class="plan-list">${checklist.map(item => `<li>${item}</li>`).join('')}</ul></div>
-        <div class="plan-section"><div class="plan-header">⏰ Timeline</div><ul class="plan-list">${timeline.map(item => `<li>${item}</li>`).join('')}</ul></div>
+        <div class="step-header"><div class="step-title">🛒 Shopping List & Review</div></div>
+        <div class="plan-section"><div class="plan-header">📋 Details</div><div style="font-size:13px;">Type: <strong>${state.type}</strong> | Location: <strong>${state.location || 'TBD'}</strong> | Theme: <strong>${state.theme || 'TBD'}</strong> | Guests: <strong>${state.guests}</strong> | Budget: <strong>${state.budget}</strong></div></div>
+        <div class="plan-section"><div class="plan-header">🧾 Shopping List</div><ul class="plan-list">${shopping.map(item => `<li>${item}</li>`).join('')}</ul></div>
+        <div class="step-buttons"><button class="btn small" id="backBtn">Back</button><button class="btn" id="nextBtn">Generate Plan</button></div>
+      </div>`;
+      wizardEl.innerHTML = html;
+      document.getElementById("nextBtn").addEventListener("click", () => { step = 6; renderWizard(); });
+      document.getElementById("backBtn").addEventListener("click", () => { step = 4; renderWizard(); });
+
+    } else if (step === 6) {
+      // Final Party Plan Summary
+      saveState();
+      const checklist = ['balloons','banner','plates/cups','table cover','party hats','cake topper','loot bags','themed backdrop'];
+      const timeline = typeof PARTY_PLANNER !== 'undefined' ? PARTY_PLANNER.timelines.afternoon : [];
+      const inviteTemplate = `You're invited to a ${state.type} party at ${state.location || 'our chosen location'}! Theme: ${state.theme || 'TBD'}. RSVP please!`;
+
+      html += `<div class="wizard-step plan-output animate-fade">
+        <div class="step-header"><div class="step-title">🎊 Party Plan Summary</div></div>
+        <div class="plan-section"><div class="plan-header">📋 Summary</div>
+          <div style="font-size:13px;">Type: <strong>${state.type}</strong></div>
+          <div style="font-size:13px;">Location: <strong>${state.location || 'TBD'}</strong></div>
+          <div style="font-size:13px;">Theme: <strong>${state.theme || 'TBD'}</strong></div>
+          <div style="font-size:13px;">Guests: <strong>${state.guests}</strong></div>
+          <div style="font-size:13px;">Budget: <strong>${state.budget}</strong></div>
+        </div>
+        <div class="plan-section"><div class="plan-header">🧾 Decor Checklist</div><ul class="plan-list">${checklist.map(i => `<li>${i}</li>`).join('')}</ul></div>
+        <div class="plan-section"><div class="plan-header">⏰ Schedule</div><ul class="plan-list">${timeline.map(item => `<li>${item}</li>`).join('')}</ul></div>
+        <div class="plan-section"><div class="plan-header">✉️ Invitation Template</div><div style="font-size:13px;">${inviteTemplate}</div></div>
         <div class="step-buttons"><button class="btn" id="printBtn">🖨️ Print</button><button class="btn small" id="regenerateBtn">Again</button></div>
       </div>`;
       wizardEl.innerHTML = html;
       document.getElementById("printBtn").addEventListener("click", () => window.print());
       document.getElementById("regenerateBtn").addEventListener("click", () => {
-        step = 1; state.type = null; state.theme = null; state.guests = 15; state.budget = "medium";
+        step = 1; state.type = null; state.theme = null; state.location = null; state.guests = 15; state.budget = "medium";
         renderWizard();
       });
     }
