@@ -751,3 +751,30 @@ async function testOllama() {
 
   render();
 })();
+
+/* ---------- SEO Analyzer: URL Input + ANALYZE Button ---------- */
+function wireSeoAnalyzer() {
+  const analyzeBtn = document.getElementById("seoAnalyzeBtn");
+  const urlInput = document.getElementById("seoUrlInput");
+  if (!analyzeBtn || !urlInput) return; // safe if page doesn't have it
+
+  analyzeBtn.addEventListener("click", async () => {
+    const url = urlInput.value.trim();
+    if (!url) {
+      alert("Please enter a URL");
+      return;
+    }
+
+    try {
+      console.log("Sending to LLM...", url);
+      const result = await askLLM(`Analyze this website for AI-first SEO: ${url}`);
+      console.log("LLM RESULT:", result);
+      alert(result); // temp
+    } catch (err) {
+      console.error("AI analysis failed:", err);
+      alert("AI analysis failed. Check console.");
+    }
+  });
+}
+
+wireSeoAnalyzer();
