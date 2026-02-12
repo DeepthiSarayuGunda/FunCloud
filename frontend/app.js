@@ -1,5 +1,5 @@
 // Premium FunCloud - All Modules
-import { askLLM } from "./ollama.js";
+import { analyzeSEO, sendChatMessage } from "./api.js";
 
 /* ---------- PARTY DECOR & VENDORS DATA ---------- */
 
@@ -952,68 +952,6 @@ async function testOllama() {
       });
       document.getElementById("nextBtn").addEventListener("click", () => { step = 5; renderWizard(); });
       document.getElementById("backBtn").addEventListener("click", () => { step = 3; renderWizard(); });
-} else if (step === 5) {
-  // Decor & Vendors (Ottawa)
-
-  html += `
-  <div class="wizard-step">
-    <div class="step-header">
-      <div class="step-title">🎨 Step 5: Decor & Vendors (Ottawa)</div>
-      <div class="step-subtitle">Choose decor items and one vendor</div>
-    </div>
-
-    <div class="plan-section">
-      <div class="plan-header">Decor</div>
-      <div class="choiceGrid">
-        ${DECOR_CATALOG.map(d => `
-          <button class="choice ${state.decor.includes(d.id) ? 'isSelected' : ''}" data-decor="${d.id}">
-            <img src="${d.img}" style="width:100%;height:80px;object-fit:cover;border-radius:8px">
-            <div>${d.name}</div>
-            <small>${d.price}</small>
-          </button>
-        `).join("")}
-      </div>
-    </div>
-
-    <div class="plan-section">
-      <div class="plan-header">Ottawa Vendors</div>
-      <div class="choiceGrid">
-        ${OTTAWA_VENDORS.map(v => `
-          <button class="choice ${state.vendor === v.id ? 'isSelected' : ''}" data-vendor="${v.id}">
-            <strong>${v.name}</strong><br>
-            <small>${v.specialty}</small>
-          </button>
-        `).join("")}
-      </div>
-    </div>
-
-    <div class="step-buttons">
-      <button class="btn small" id="backBtn">Back</button>
-      <button class="btn" id="nextBtn">Next</button>
-    </div>
-  </div>`;
-
-  wizardEl.innerHTML = html;
-
-  document.querySelectorAll("[data-decor]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.decor;
-      state.decor = state.decor.includes(id)
-        ? state.decor.filter(d => d !== id)
-        : [...state.decor, id];
-      renderWizard();
-    });
-  });
-
-  document.querySelectorAll("[data-vendor]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      state.vendor = btn.dataset.vendor;
-      renderWizard();
-    });
-  });
-
-  document.getElementById("nextBtn").onclick = () => { step = 6; renderWizard(); };
-  document.getElementById("backBtn").onclick = () => { step = 4; renderWizard(); };
 
     } else if (step === 5) {
       // Review & Shopping list
@@ -1063,7 +1001,7 @@ async function testOllama() {
   renderWizard();
 })();
 
-/* ---------- CHAT: Suggestions + Local Responder ---------- */
+/* ---------- CHAT: AI-Powered Chat ---------- */
 (function chatInit() {
   const messagesEl = document.getElementById("chatMessages");
   const inputEl = document.getElementById("chatInput");
@@ -1075,19 +1013,11 @@ async function testOllama() {
 
   if (!messagesEl) return;
 
-  function loadMsgs() { try { return JSON.parse(localStorage.getItem(MSG_KEY)) || []; } catch { return []; } }
-  function saveMsgs(list) { if (list.length > 20) list = list.slice(-20); localStorage.setItem(MSG_KEY, JSON.stringify(list)); }
+  // Store conversation history for AI context
+  let conversationHistory = [];
 
-  function getResponse(text) {
-    const lower = text.toLowerCase();
-    if (typeof CHAT_RESPONSES !== 'undefined') {
-      if (lower.includes("story")) return CHAT_RESPONSES.story[Math.floor(Math.random() * CHAT_RESPONSES.story.length)];
-      if (lower.includes("study") || lower.includes("learn")) return CHAT_RESPONSES.study[Math.floor(Math.random() * CHAT_RESPONSES.study.length)];
-      if (lower.includes("party")) return CHAT_RESPONSES.party[Math.floor(Math.random() * CHAT_RESPONSES.party.length)];
-      if (lower.includes("quote")) return CHAT_RESPONSES.quote[Math.floor(Math.random() * CHAT_RESPONSES.quote.length)];
-    }
-    return "That's wonderful! 🌟 Keep exploring!";
-  }
+  function loadMsgs() { try { return JSON.parse(localStorage.getItem(MSG_KEY)) || []; } catch { return []; } }
+  function saveMsgs(list) { if (list.length > 50) list = list.slice(-50); localStorage.setItem(MSG_KEY, JSON.stringify(list)); }
 
   function render() {
     const msgs = loadMsgs();
@@ -1115,21 +1045,69 @@ async function testOllama() {
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
-  function send(text = null) {
+  async function send(text = null) {
     const v = (text || inputEl.value || "").trim();
     if (!v) return;
+    
     const list = loadMsgs();
     const name = (nameEl?.value?.trim()) || 'Friend';
+    
+    // Add user message
     list.push({ text: v, at: new Date().toISOString(), name, isBot: false });
-    const response = getResponse(v);
-    setTimeout(() => {
-      list.push({ text: response, at: new Date().toISOString(), name: 'FunCloud', isBot: true });
-      saveMsgs(list);
-      render();
-    }, 800);
     saveMsgs(list);
     inputEl.value = "";
     render();
+
+    // Show typing indicator
+    const typingLi = document.createElement("li");
+    typingLi.id = "typing-indicator";
+    typingLi.style.cssText = "padding:8px; margin-bottom:8px; border-radius:10px; background:#f0f0f0";
+    typingLi.innerHTML = '<div style="font-size:11px; color:#666;">FunCloud 🤖 is typing...</div>';
+    messagesEl.appendChild(typingLi);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    try {
+      // Build history for AI context (last 10 messages)
+      const recentMsgs = list.slice(-10);
+      const history = recentMsgs.map(m => ({
+        role: m.isBot ? "assistant" : "user",
+        content: m.text
+      }));
+
+      // Call AI backend
+      const response = await sendChatMessage(v, history);
+      
+      // Remove typing indicator
+      const indicator = document.getElementById("typing-indicator");
+      if (indicator) indicator.remove();
+
+      // Add AI response
+      list.push({ 
+        text: response.reply, 
+        at: new Date().toISOString(), 
+        name: 'FunCloud', 
+        isBot: true 
+      });
+      saveMsgs(list);
+      render();
+
+    } catch (err) {
+      console.error("Chat error:", err);
+      
+      // Remove typing indicator
+      const indicator = document.getElementById("typing-indicator");
+      if (indicator) indicator.remove();
+
+      // Show error message
+      list.push({ 
+        text: `Sorry, I'm having trouble connecting. ${err.message}`, 
+        at: new Date().toISOString(), 
+        name: 'FunCloud', 
+        isBot: true 
+      });
+      saveMsgs(list);
+      render();
+    }
   }
 
   if (chipsContainer) {
@@ -1144,7 +1122,11 @@ async function testOllama() {
 
   if (sendBtn) sendBtn.addEventListener("click", () => send());
   if (inputEl) inputEl.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
-  if (clearBtn) clearBtn.addEventListener("click", () => { localStorage.removeItem(MSG_KEY); render(); });
+  if (clearBtn) clearBtn.addEventListener("click", () => { 
+    localStorage.removeItem(MSG_KEY); 
+    conversationHistory = [];
+    render(); 
+  });
 
   render();
 })();
@@ -1153,7 +1135,19 @@ async function testOllama() {
 function wireSeoAnalyzer() {
   const analyzeBtn = document.getElementById("seoAnalyzeBtn");
   const urlInput = document.getElementById("seoUrlInput");
-  if (!analyzeBtn || !urlInput) return; // safe if page doesn't have it
+  if (!analyzeBtn || !urlInput) return;
+
+  // Create results container if it doesn't exist
+  let resultsContainer = document.getElementById("seoResults");
+  if (!resultsContainer) {
+    resultsContainer = document.createElement("div");
+    resultsContainer.id = "seoResults";
+    resultsContainer.style.cssText = "margin-top: 20px; padding: 20px; background: white; border-radius: 12px; display: none;";
+    const seoHero = document.querySelector(".seoHero");
+    if (seoHero) {
+      seoHero.parentNode.insertBefore(resultsContainer, seoHero.nextSibling);
+    }
+  }
 
   analyzeBtn.addEventListener("click", async () => {
     const url = urlInput.value.trim();
@@ -1162,16 +1156,59 @@ function wireSeoAnalyzer() {
       return;
     }
 
+    // Show loading state
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = "ANALYZING...";
+    resultsContainer.style.display = "none";
+
     try {
-      console.log("Sending to LLM...", url);
-      const result = await askLLM(`Analyze this website for AI-first SEO: ${url}`);
-      console.log("LLM RESULT:", result);
-      alert(result); // temp
+      const result = await analyzeSEO(url);
+      
+      // Render results
+      let html = `
+        <h3 style="margin: 0 0 10px 0; color: #667eea;">SEO Analysis Results</h3>
+        <p style="margin: 0 0 20px 0; color: #666; font-size: 14px;"><strong>URL:</strong> ${result.url}</p>
+        <div style="padding: 15px; background: #f0f4ff; border-radius: 8px; margin-bottom: 20px;">
+          <strong style="color: #667eea;">Summary:</strong>
+          <p style="margin: 8px 0 0 0; font-size: 14px;">${result.summary}</p>
+        </div>
+        <h4 style="margin: 0 0 15px 0; color: #333;">Recommendations:</h4>
+      `;
+
+      result.recommendations.forEach((rec, idx) => {
+        const priorityColor = rec.priority === "High" ? "#e74c3c" : rec.priority === "Medium" ? "#f39c12" : "#27ae60";
+        html += `
+          <div style="margin-bottom: 15px; padding: 15px; border-left: 4px solid ${priorityColor}; background: #f9f9f9; border-radius: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong style="color: #333;">${idx + 1}. ${rec.category}</strong>
+              <span style="padding: 4px 12px; background: ${priorityColor}; color: white; border-radius: 12px; font-size: 11px; font-weight: bold;">${rec.priority}</span>
+            </div>
+            <p style="margin: 0 0 8px 0; font-size: 14px; color: #555;">${rec.recommendation}</p>
+            <p style="margin: 0; font-size: 13px; color: #888;"><em>Impact:</em> ${rec.impact}</p>
+          </div>
+        `;
+      });
+
+      resultsContainer.innerHTML = html;
+      resultsContainer.style.display = "block";
+
     } catch (err) {
-      console.error("AI analysis failed:", err);
-      alert("AI analysis failed. Check console.");
+      console.error("SEO analysis failed:", err);
+      resultsContainer.innerHTML = `
+        <div style="padding: 20px; background: #fee; border-radius: 8px; color: #c33;">
+          <strong>Analysis Failed</strong>
+          <p style="margin: 8px 0 0 0; font-size: 14px;">${err.message}</p>
+          <p style="margin: 8px 0 0 0; font-size: 13px;">Make sure the backend is running and OPENAI_API_KEY is set.</p>
+        </div>
+      `;
+      resultsContainer.style.display = "block";
+    } finally {
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = "ANALYZE";
     }
   });
 }
+window.onload = () => {
+  wireSeoAnalyzer();
+};
 
-wireSeoAnalyzer();

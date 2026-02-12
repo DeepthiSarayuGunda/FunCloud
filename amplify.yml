@@ -1,10 +1,11 @@
 version: 1
 frontend:
   phases:
-    # No build phase needed - this is a static site
     build:
       commands:
-        - echo "Static site deployment - no build required"
+        - echo "Injecting environment variables..."
+        - sed -i "s|%%API_BASE_URL%%|$API_BASE_URL|g" frontend/env-config.js
+        - echo "Build complete"
   artifacts:
     baseDirectory: frontend
     files:

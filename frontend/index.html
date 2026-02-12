@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FunCloud</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="env-config.js"></script>
   <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+  <script type="module" src="config.js"></script>
 </head>
 <body>
  <header class="topbar">
@@ -114,12 +116,21 @@
               <button class="tile kzItem" type="button" data-zone="animals" data-item="lion" role="listitem">
                 <div class="tileEmoji">🦁</div><div class="tileName">Lion</div><div class="tileHint">Tap</div>
               </button>
-              <button class="tile kzItem" type="button" data-zone="animals" data-item="elephant" role="listitem">
-                <div class="tileEmoji">🐘</div><div class="tileName">Elephant</div><div class="tileHint">Tap</div>
-              </button>
-              <button class="tile kzItem" type="button" data-zone="animals" data-item="dolphin" role="listitem">
-                <div class="tileEmoji">🐬</div><div class="tileName">Dolphin</div><div class="tileHint">Tap</div>
-              </button>
+                <button class="tile kzItem" type="button" data-zone="animals" data-item="elephant" role="listitem">
+                  <div class="tileEmoji">🐘</div><div class="tileName">Elephant</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="animals" data-item="dolphin" role="listitem">
+                  <div class="tileEmoji">🐬</div><div class="tileName">Dolphin</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="animals" data-item="tiger" role="listitem">
+                  <div class="tileEmoji">🐯</div><div class="tileName">Tiger</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="animals" data-item="monkey" role="listitem">
+                  <div class="tileEmoji">🐒</div><div class="tileName">Monkey</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="animals" data-item="penguin" role="listitem">
+                  <div class="tileEmoji">🐧</div><div class="tileName">Penguin</div><div class="tileHint">Tap</div>
+                </button>
             </div>
           </div>
 
@@ -129,12 +140,21 @@
               <button class="tile kzItem" type="button" data-zone="space" data-item="rocket" role="listitem">
                 <div class="tileEmoji">🚀</div><div class="tileName">Rocket</div><div class="tileHint">Tap</div>
               </button>
-              <button class="tile kzItem" type="button" data-zone="space" data-item="planet" role="listitem">
-                <div class="tileEmoji">🪐</div><div class="tileName">Planet</div><div class="tileHint">Tap</div>
-              </button>
-              <button class="tile kzItem" type="button" data-zone="space" data-item="astronaut" role="listitem">
-                <div class="tileEmoji">🧑‍🚀</div><div class="tileName">Astronaut</div><div class="tileHint">Tap</div>
-              </button>
+                <button class="tile kzItem" type="button" data-zone="space" data-item="planet" role="listitem">
+                  <div class="tileEmoji">🪐</div><div class="tileName">Planet</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="space" data-item="astronaut" role="listitem">
+                  <div class="tileEmoji">🧑‍🚀</div><div class="tileName">Astronaut</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="space" data-item="comet" role="listitem">
+                  <div class="tileEmoji">☄️</div><div class="tileName">Comet</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="space" data-item="satellite" role="listitem">
+                  <div class="tileEmoji">🛰️</div><div class="tileName">Satellite</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="space" data-item="moon" role="listitem">
+                  <div class="tileEmoji">🌕</div><div class="tileName">Moon</div><div class="tileHint">Tap</div>
+                </button>
             </div>
           </div>
 
@@ -144,12 +164,21 @@
               <button class="tile kzItem" type="button" data-zone="dinosaurs" data-item="trex" role="listitem">
                 <div class="tileEmoji">🦖</div><div class="tileName">T-Rex</div><div class="tileHint">Tap</div>
               </button>
-              <button class="tile kzItem" type="button" data-zone="dinosaurs" data-item="sauropod" role="listitem">
-                <div class="tileEmoji">🦕</div><div class="tileName">Sauropod</div><div class="tileHint">Tap</div>
-              </button>
-              <button class="tile kzItem" type="button" data-zone="dinosaurs" data-item="egg" role="listitem">
-                <div class="tileEmoji">🥚</div><div class="tileName">Dino Egg</div><div class="tileHint">Tap</div>
-              </button>
+                <button class="tile kzItem" type="button" data-zone="dinosaurs" data-item="sauropod" role="listitem">
+                  <div class="tileEmoji">🦕</div><div class="tileName">Sauropod</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="dinosaurs" data-item="egg" role="listitem">
+                  <div class="tileEmoji">🥚</div><div class="tileName">Dino Egg</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="dinosaurs" data-item="triceratops" role="listitem">
+                  <div class="tileEmoji">🦕</div><div class="tileName">Triceratops</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="dinosaurs" data-item="velociraptor" role="listitem">
+                  <div class="tileEmoji">🦖</div><div class="tileName">Velociraptor</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="dinosaurs" data-item="brachiosaurus" role="listitem">
+                  <div class="tileEmoji">🦕</div><div class="tileName">Brachiosaurus</div><div class="tileHint">Tap</div>
+                </button>
             </div>
           </div>
 
@@ -159,12 +188,21 @@
               <button class="tile kzItem" type="button" data-zone="ocean" data-item="shark" role="listitem">
                 <div class="tileEmoji">🦈</div><div class="tileName">Shark</div><div class="tileHint">Tap</div>
               </button>
-              <button class="tile kzItem" type="button" data-zone="ocean" data-item="octopus" role="listitem">
-                <div class="tileEmoji">🐙</div><div class="tileName">Octopus</div><div class="tileHint">Tap</div>
-              </button>
-              <button class="tile kzItem" type="button" data-zone="ocean" data-item="turtle" role="listitem">
-                <div class="tileEmoji">🐢</div><div class="tileName">Turtle</div><div class="tileHint">Tap</div>
-              </button>
+                <button class="tile kzItem" type="button" data-zone="ocean" data-item="octopus" role="listitem">
+                  <div class="tileEmoji">🐙</div><div class="tileName">Octopus</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="ocean" data-item="turtle" role="listitem">
+                  <div class="tileEmoji">🐢</div><div class="tileName">Turtle</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="ocean" data-item="whale" role="listitem">
+                  <div class="tileEmoji">🐋</div><div class="tileName">Whale</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="ocean" data-item="seahorse" role="listitem">
+                  <div class="tileEmoji">🦄</div><div class="tileName">Seahorse</div><div class="tileHint">Tap</div>
+                </button>
+                <button class="tile kzItem" type="button" data-zone="ocean" data-item="jellyfish" role="listitem">
+                  <div class="tileEmoji">🪼</div><div class="tileName">Jellyfish</div><div class="tileHint">Tap</div>
+                </button>
             </div>
           </div>
         </div>
@@ -218,8 +256,8 @@
     <!-- PAGE: CHAT -->
     <section class="page" id="page-chat" aria-label="Chat page">
       <div class="card chatBox">
-        <h1 class="title">Chat (Local demo)</h1>
-        <p class="subtitle">A simple local chat view. Messages are stored in localStorage for this demo.</p>
+        <h1 class="title">AI Chat</h1>
+        <p class="subtitle">Chat with FunCloud AI powered by OpenAI. Ask questions, get help, or just chat!</p>
 
         <ul id="chatMessages" class="chatMessages" aria-live="polite"></ul>
 
