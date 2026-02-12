@@ -1,6 +1,9 @@
 import React from 'react'
 import ThreeHero from './ThreeHero'
+<<<<<<< HEAD
 import Lottie from 'lottie-react'
+=======
+>>>>>>> 16dffbd (AI chat integration updates)
 
 export default function Hero() {
   return (
