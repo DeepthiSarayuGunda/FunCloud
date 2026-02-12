@@ -1,14 +1,17 @@
 version: 1
 frontend:
   phases:
+    preBuild:
+      commands:
+        - cd kids-app
+        - npm ci
     build:
       commands:
-        - echo "Injecting environment variables..."
-        - sed -i "s|%%API_BASE_URL%%|$API_BASE_URL|g" frontend/env-config.js
-        - echo "Build complete"
+        - npm run build
   artifacts:
-    baseDirectory: frontend
+    baseDirectory: kids-app/dist
     files:
-      - '**/*'
+      - '/**/*'
   cache:
-    paths: []
+    paths:
+      - kids-app/node_modules/**/*
