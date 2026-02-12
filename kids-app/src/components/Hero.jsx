@@ -1,6 +1,6 @@
 import React from 'react'
 import ThreeHero from './ThreeHero'
-import { Player } from 'lottie-react'
+import Lottie from 'lottie-react'
 
 export default function Hero() {
   return (
@@ -12,7 +12,7 @@ export default function Hero() {
         </div>
         <div className="w-36 h-24">
           {/* Placeholder Lottie */}
-          <Player src="/assets/animations/placeholder.json" loop autoplay />
+          <Lottie animationData="/assets/animations/placeholder.json" loop autoplay />
         </div>
       </div>
 
