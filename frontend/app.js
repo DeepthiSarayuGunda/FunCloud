@@ -902,21 +902,21 @@ async function testOllama() {
           icon: "🦸‍♂️", 
           gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
           description: "Action-packed superhero party with bold colors, comic decorations, and hero masks.",
-          photoUrl: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80"
+          photoUrl: "https://images.unsplash.com/photo-1464047736614-af63643285bf?w=800&q=80"
         },
         { 
           name: "Dino", 
           icon: "🦕", 
           gradient: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
           description: "Prehistoric dinosaur adventure with jungle decorations, dino balloons, and themed cake.",
-          photoUrl: "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800&q=80"
+          photoUrl: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800&q=80"
         },
         { 
           name: "Space", 
           icon: "🚀", 
           gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
           description: "Out-of-this-world space party with galaxy theme, planet decorations, and astronaut cake.",
-          photoUrl: "https://images.unsplash.com/photo-1464047736614-af63643285bf?w=800&q=80"
+          photoUrl: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80"
         },
         { 
           name: "Unicorn", 
@@ -930,7 +930,7 @@ async function testOllama() {
           icon: "🌊", 
           gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
           description: "Underwater ocean party with blue decorations, sea creature balloons, and mermaid cake.",
-          photoUrl: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800&q=80"
+          photoUrl: "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800&q=80"
         },
         { 
           name: "Sports", 
@@ -944,14 +944,14 @@ async function testOllama() {
           icon: "🪓", 
           gradient: "linear-gradient(135deg, #96fbc4 0%, #f9f586 100%)",
           description: "Blocky Minecraft party with pixelated decorations, creeper balloons, and block cake.",
-          photoUrl: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&q=80"
+          photoUrl: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&q=80"
         },
         { 
           name: "Paw Patrol", 
           icon: "🐶", 
           gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
           description: "Rescue-themed party with pup decorations, badges, and colorful table setup.",
-          photoUrl: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&q=80"
+          photoUrl: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&q=80&sat=-100"
         }
       ];
 
