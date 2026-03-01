@@ -890,15 +890,69 @@ async function testOllama() {
       ];
 
       const themes = [
-        { name: "Princess", icon: "👑", gradient: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" },
-        { name: "Superheroes", icon: "🦸‍♂️", gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)" },
-        { name: "Dino", icon: "🦕", gradient: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)" },
-        { name: "Space", icon: "🚀", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
-        { name: "Unicorn", icon: "🦄", gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)" },
-        { name: "Ocean", icon: "🌊", gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
-        { name: "Sports", icon: "🏀", gradient: "linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%)" },
-        { name: "Minecraft", icon: "🪓", gradient: "linear-gradient(135deg, #96fbc4 0%, #f9f586 100%)" },
-        { name: "Paw Patrol", icon: "🐶", gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)" }
+        { 
+          name: "Princess", 
+          icon: "👑", 
+          gradient: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)",
+          description: "A magical princess party with pink decorations, crown balloons, and a royal castle cake.",
+          decorEmojis: "👑 🎀 💖 🏰 ✨ 🎂 🎈"
+        },
+        { 
+          name: "Superheroes", 
+          icon: "🦸‍♂️", 
+          gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+          description: "An action-packed superhero party with bold colors, comic book decorations, and hero masks.",
+          decorEmojis: "🦸‍♂️ 💥 ⚡ 🎭 🎈 🎂 🏆"
+        },
+        { 
+          name: "Dino", 
+          icon: "🦕", 
+          gradient: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
+          description: "A prehistoric dinosaur adventure with jungle decorations, dino balloons, and fossil cake.",
+          decorEmojis: "🦕 🦖 🌴 🥚 🌋 🎂 🎈"
+        },
+        { 
+          name: "Space", 
+          icon: "🚀", 
+          gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          description: "An out-of-this-world space party with stars, planets, rocket decorations, and galaxy cake.",
+          decorEmojis: "🚀 🌟 🪐 👨‍🚀 ✨ 🎂 🎈"
+        },
+        { 
+          name: "Unicorn", 
+          icon: "🦄", 
+          gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+          description: "A dreamy unicorn party with rainbow colors, sparkles, cloud decorations, and magical cake.",
+          decorEmojis: "🦄 🌈 ✨ ☁️ 💫 🎂 🎈"
+        },
+        { 
+          name: "Ocean", 
+          icon: "🌊", 
+          gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+          description: "An underwater ocean party with sea creatures, blue decorations, and wave-themed cake.",
+          decorEmojis: "🌊 🐠 🐙 🦈 🐚 🎂 🎈"
+        },
+        { 
+          name: "Sports", 
+          icon: "🏀", 
+          gradient: "linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%)",
+          description: "An energetic sports party with team colors, ball decorations, and trophy cake.",
+          decorEmojis: "🏀 ⚽ 🏆 🎯 🥇 🎂 🎈"
+        },
+        { 
+          name: "Minecraft", 
+          icon: "🪓", 
+          gradient: "linear-gradient(135deg, #96fbc4 0%, #f9f586 100%)",
+          description: "A blocky Minecraft party with pixelated decorations, creeper balloons, and block cake.",
+          decorEmojis: "🪓 ⛏️ 🧱 💎 🗡️ 🎂 🎈"
+        },
+        { 
+          name: "Paw Patrol", 
+          icon: "🐶", 
+          gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+          description: "A rescue-themed Paw Patrol party with pup decorations, badges, and paw print cake.",
+          decorEmojis: "🐶 🚒 🚓 🐾 🦴 🎂 🎈"
+        }
       ];
 
       html += `<div class="wizard-step"><div class="step-header"><div class="step-title">📍 Step 2: Location & Theme</div><div class="step-subtitle">Choose a location and theme</div></div>`;
@@ -927,7 +981,7 @@ async function testOllama() {
       // Themes with image placeholders
       html += `<div class="plan-section"><div class="plan-header">🎭 Theme / Decor</div><div class="choiceGrid" id="themeChoices">`;
       themes.forEach(t => { 
-        html += `<button class="choice ${state.theme === t.name ? 'isSelected' : ''}" data-theme="${t.name}">
+        html += `<button class="choice ${state.theme === t.name ? 'isSelected' : ''}" data-theme="${t.name}" data-theme-index="${themes.indexOf(t)}">
           <div class="theme-card">
             <div class="theme-image" style="background: ${t.gradient};">${t.icon}</div>
             <div class="theme-name">${t.name}</div>
@@ -936,8 +990,32 @@ async function testOllama() {
       });
       html += `</div></div>`;
 
+      // Theme Preview (shown when theme is selected)
+      html += `<div id="themePreview" class="theme-preview hidden"></div>`;
+
       html += `<div class="step-buttons"><button class="btn small" id="backBtn">Back</button><button class="btn" id="nextBtn">Next</button></div></div>`;
       wizardEl.innerHTML = html;
+
+      // Function to show theme preview
+      function showThemePreview(themeIndex) {
+        const theme = themes[themeIndex];
+        const previewEl = document.getElementById("themePreview");
+        
+        previewEl.innerHTML = `
+          <div class="theme-preview-card animate-fade">
+            <div class="theme-preview-header">
+              <div class="theme-preview-icon">${theme.icon}</div>
+              <div class="theme-preview-title">${theme.name} Theme</div>
+            </div>
+            <div class="theme-preview-image" style="background: ${theme.gradient};">
+              <div class="theme-preview-decor">${theme.decorEmojis}</div>
+            </div>
+            <div class="theme-preview-description">${theme.description}</div>
+          </div>
+        `;
+        
+        previewEl.classList.remove("hidden");
+      }
 
       document.querySelectorAll("#locationChoices .choice").forEach(btn => {
         btn.addEventListener("click", (e) => {
@@ -953,11 +1031,30 @@ async function testOllama() {
         btn.addEventListener("click", (e) => {
           const target = e.currentTarget;
           state.theme = target.dataset.theme;
+          const themeIndex = parseInt(target.dataset.themeIndex);
+          
           document.querySelectorAll("#themeChoices .choice").forEach(b => b.classList.remove("isSelected"));
           target.classList.add("isSelected");
-          renderWizard(); // Re-render to update summary
+          
+          // Show theme preview
+          showThemePreview(themeIndex);
+          
+          // Update summary without full re-render
+          const summaryValue = document.querySelector('.party-summary-item:last-child .party-summary-value');
+          if (summaryValue) {
+            summaryValue.textContent = state.theme;
+          }
         });
       });
+
+      // Show preview if theme already selected
+      if (state.theme) {
+        const selectedThemeBtn = document.querySelector(`#themeChoices .choice[data-theme="${state.theme}"]`);
+        if (selectedThemeBtn) {
+          const themeIndex = parseInt(selectedThemeBtn.dataset.themeIndex);
+          showThemePreview(themeIndex);
+        }
+      }
 
       document.getElementById("nextBtn").addEventListener("click", () => { step = 3; renderWizard(); });
       document.getElementById("backBtn").addEventListener("click", () => { step = 1; renderWizard(); });
