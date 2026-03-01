@@ -3,7 +3,9 @@ frontend:
   phases:
     build:
       commands:
-        - echo "Static frontend - no build needed"
+        - echo "Injecting API URL into frontend..."
+        - sed -i "s|%%API_BASE_URL%%|$FUNCLOUD_API_URL|g" frontend/env-config.js
+        - echo "API URL injected successfully"
   artifacts:
     baseDirectory: frontend
     files:
