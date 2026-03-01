@@ -894,64 +894,64 @@ async function testOllama() {
           name: "Princess", 
           icon: "👑", 
           gradient: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)",
-          description: "Magical princess party with pink & purple balloons, crown decorations, castle backdrop, and royal cake.",
-          decorEmojis: "👑 🎀 💖 🏰 ✨ 🎂 🎈 💝 🌸"
+          description: "Magical princess party with pink & purple balloons, crown decorations, and royal cake.",
+          photoUrl: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&q=80"
         },
         { 
           name: "Superheroes", 
           icon: "🦸‍♂️", 
           gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-          description: "Action-packed superhero party with bold red & yellow colors, comic book decorations, hero masks, and cape accessories.",
-          decorEmojis: "🦸‍♂️ 💥 ⚡ 🎭 🎈 🎂 🏆 💪 🌟"
+          description: "Action-packed superhero party with bold colors, comic decorations, and hero masks.",
+          photoUrl: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80"
         },
         { 
           name: "Dino", 
           icon: "🦕", 
           gradient: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
-          description: "Prehistoric dinosaur adventure with jungle green decorations, dino balloons, fossil dig activities, and volcano cake.",
-          decorEmojis: "🦕 🦖 🌴 🥚 🌋 🎂 🎈 🦴 🍃"
+          description: "Prehistoric dinosaur adventure with jungle decorations, dino balloons, and themed cake.",
+          photoUrl: "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800&q=80"
         },
         { 
           name: "Space", 
           icon: "🚀", 
           gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          description: "Out-of-this-world space party with dark blue & purple galaxy theme, planet decorations, rocket props, and astronaut cake.",
-          decorEmojis: "🚀 🌟 🪐 👨‍🚀 ✨ 🎂 🎈 🌙 ⭐"
+          description: "Out-of-this-world space party with galaxy theme, planet decorations, and astronaut cake.",
+          photoUrl: "https://images.unsplash.com/photo-1464047736614-af63643285bf?w=800&q=80"
         },
         { 
           name: "Unicorn", 
           icon: "🦄", 
           gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
-          description: "Dreamy unicorn party with pastel rainbow colors, sparkle decorations, cloud backdrop, and magical horn cake.",
-          decorEmojis: "🦄 🌈 ✨ ☁️ 💫 🎂 🎈 🌸 💖"
+          description: "Dreamy unicorn party with pastel rainbow colors, sparkle decorations, and magical cake.",
+          photoUrl: "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=800&q=80"
         },
         { 
           name: "Ocean", 
           icon: "🌊", 
           gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-          description: "Underwater ocean party with blue wave decorations, sea creature balloons, coral backdrop, and mermaid cake.",
-          decorEmojis: "🌊 🐠 🐙 🦈 🐚 🎂 🎈 🧜‍♀️ 🐬"
+          description: "Underwater ocean party with blue decorations, sea creature balloons, and mermaid cake.",
+          photoUrl: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800&q=80"
         },
         { 
           name: "Sports", 
           icon: "🏀", 
           gradient: "linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%)",
-          description: "Energetic sports party with team colors, ball decorations, trophy displays, medal favors, and championship cake.",
-          decorEmojis: "🏀 ⚽ 🏆 🎯 🥇 🎂 🎈 🏅 ⚾"
+          description: "Energetic sports party with team colors, ball decorations, and trophy displays.",
+          photoUrl: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=800&q=80"
         },
         { 
           name: "Minecraft", 
           icon: "🪓", 
           gradient: "linear-gradient(135deg, #96fbc4 0%, #f9f586 100%)",
-          description: "Blocky Minecraft party with pixelated green decorations, creeper balloons, TNT props, and block-style cake.",
-          decorEmojis: "🪓 ⛏️ 🧱 💎 🗡️ 🎂 🎈 🟩 🟫"
+          description: "Blocky Minecraft party with pixelated decorations, creeper balloons, and block cake.",
+          photoUrl: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&q=80"
         },
         { 
           name: "Paw Patrol", 
           icon: "🐶", 
           gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
-          description: "Rescue-themed Paw Patrol party with pup decorations, badge props, fire truck & police car displays, and paw print cake.",
-          decorEmojis: "🐶 🚒 🚓 🐾 🦴 🎂 🎈 🚁 🏅"
+          description: "Rescue-themed party with pup decorations, badges, and colorful table setup.",
+          photoUrl: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&q=80"
         }
       ];
 
@@ -1022,8 +1022,8 @@ async function testOllama() {
         
         panel.innerHTML = `
           <div class="preview-content animate-fade">
-            <div class="preview-image" style="background: ${theme.gradient};">
-              <div class="preview-decorations">${theme.decorEmojis}</div>
+            <div class="preview-photo-container">
+              <img src="${theme.photoUrl}" alt="${theme.name} party decorations" class="preview-photo" loading="lazy" />
             </div>
             <div class="preview-details">
               <div class="preview-theme-icon">${theme.icon}</div>
