@@ -4,21 +4,40 @@ from pydantic import BaseModel, HttpUrl
 from typing import List, Optional
 import os
 from openai import OpenAI
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = FastAPI(title="FunCloud AI Backend")
 
 # CORS configuration for Amplify frontend
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with your Amplify domain
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    print("WARNING: OPENAI_API_KEY not set. Chat will not work.")
+    client = None
+else:
+    client = OpenAI(api_key=OPENAI_API_KEY)
+    
 MODEL = "gpt-4o-mini"  # Low-cost model
+
+# Lambda handler (for AWS Lambda deployment)
+try:
+    from mangum import Mangum
+    handler = Mangum(app)
+except ImportError:
+    pass  # mangum not installed, skip Lambda handler
 
 
 # Request/Response models
@@ -121,6 +140,24 @@ async def chat(request: ChatRequest):
     Chat endpoint that provides AI responses like ChatGPT.
     Maintains conversation history.
     """
+    # Check if OpenAI client is initialized
+    if not client:
+        raise HTTPException(
+            status_code=500, 
+            detail="OpenAI API key not configured. Set OPENAI_API_KEY environment variable."
+        )
+    
+    # Safety: max message length
+    MAX_MESSAGE_LENGTH = 2000
+    if len(request.message) > MAX_MESSAGE_LENGTH:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Message too long. Maximum {MAX_MESSAGE_LENGTH} characters."
+        )
+    
+    if not request.message.strip():
+        raise HTTPException(status_code=400, detail="Message cannot be empty")
+    
     try:
         # Build messages array with history
         messages = [
@@ -146,6 +183,7 @@ async def chat(request: ChatRequest):
         return ChatResponse(reply=reply)
 
     except Exception as e:
+        print(f"Chat error: {str(e)}")  # Log for debugging
         raise HTTPException(status_code=500, detail=f"Chat failed: {str(e)}")
 
 

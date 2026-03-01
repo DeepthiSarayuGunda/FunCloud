@@ -21,9 +21,9 @@ function getApiBaseUrl() {
     return 'http://localhost:8000';
   }
   
-  // Priority 4: Fail with clear error
-  console.error('API_BASE_URL not configured! Set window.ENV.API_BASE_URL or window.FUNCLOUD_API_URL');
-  return null;
+  // Priority 4: Production fallback - replace with your backend URL
+  console.warn('API_BASE_URL not configured! Using fallback. Set window.FUNCLOUD_API_URL in production.');
+  return 'https://your-backend-url.com';
 }
 
 // Configuration object

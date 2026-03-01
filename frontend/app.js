@@ -878,30 +878,62 @@ async function testOllama() {
       document.getElementById("nextBtn").addEventListener("click", () => { if (state.type) { step = 2; renderWizard(); } });
 
     } else if (step === 2) {
-      // Location & Theme
+      // Location & Theme with icons and image placeholders
       const locations = [
-        "Mooney's Bay Park",
-        "Andrew Haydon Park",
-        "Vincent Massey Park",
-        "Lansdowne Park",
-        "Britannia Beach",
-        "Museum of Nature (nearby)",
-        "Local community center"
+        { name: "Mooney's Bay Park", icon: "🏞️", gradient: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)" },
+        { name: "Andrew Haydon Park", icon: "🏞️", gradient: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" },
+        { name: "Vincent Massey Park", icon: "🏞️", gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)" },
+        { name: "Lansdowne Park", icon: "🏛️", gradient: "linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)" },
+        { name: "Britannia Beach", icon: "🏖️", gradient: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" },
+        { name: "Museum of Nature", icon: "🏛️", gradient: "linear-gradient(135deg, #fdcbf1 0%, #e6dee9 100%)" },
+        { name: "Community Center", icon: "🏢", gradient: "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)" }
       ];
 
-      // Themes - include wider set and emoji placeholders
-      const themeChoices = ["Princess", "Superheroes", "Dino", "Space", "Unicorn", "Ocean", "Sports", "Minecraft", "Paw Patrol"];
+      const themes = [
+        { name: "Princess", icon: "👑", gradient: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" },
+        { name: "Superheroes", icon: "🦸‍♂️", gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)" },
+        { name: "Dino", icon: "🦕", gradient: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)" },
+        { name: "Space", icon: "🚀", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
+        { name: "Unicorn", icon: "🦄", gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)" },
+        { name: "Ocean", icon: "🌊", gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
+        { name: "Sports", icon: "🏀", gradient: "linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%)" },
+        { name: "Minecraft", icon: "🪓", gradient: "linear-gradient(135deg, #96fbc4 0%, #f9f586 100%)" },
+        { name: "Paw Patrol", icon: "🐶", gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)" }
+      ];
 
       html += `<div class="wizard-step"><div class="step-header"><div class="step-title">📍 Step 2: Location & Theme</div><div class="step-subtitle">Choose a location and theme</div></div>`;
-      // Locations
+      
+      // Party Summary Box
+      if (state.type || state.location || state.theme) {
+        html += `<div class="party-summary"><div class="party-summary-title">🎉 Your Party Plan</div>`;
+        if (state.type) html += `<div class="party-summary-item"><span class="party-summary-label">Type:</span><span class="party-summary-value">${state.type}</span></div>`;
+        if (state.location) html += `<div class="party-summary-item"><span class="party-summary-label">Location:</span><span class="party-summary-value">${state.location}</span></div>`;
+        if (state.theme) html += `<div class="party-summary-item"><span class="party-summary-label">Theme:</span><span class="party-summary-value">${state.theme}</span></div>`;
+        html += `</div>`;
+      }
+      
+      // Locations with image placeholders
       html += `<div class="plan-section"><div class="plan-header">📌 Locations (Ottawa)</div><div class="choiceGrid" id="locationChoices">`;
-      locations.forEach(loc => { html += `<button class="choice ${state.location === loc ? 'isSelected' : ''}">${loc}</button>`; });
+      locations.forEach(loc => { 
+        html += `<button class="choice ${state.location === loc.name ? 'isSelected' : ''}" data-location="${loc.name}">
+          <div class="location-card">
+            <div class="location-image" style="background: ${loc.gradient};">${loc.icon}</div>
+            <div class="location-name">${loc.name}</div>
+          </div>
+        </button>`; 
+      });
       html += `</div></div>`;
 
-      // Themes with emoji tiles
+      // Themes with image placeholders
       html += `<div class="plan-section"><div class="plan-header">🎭 Theme / Decor</div><div class="choiceGrid" id="themeChoices">`;
-      const themeEmojiMap = { Princess: '👑', Superheroes: '🦸‍♂️', Dino: '🦕', Space: '🚀', Unicorn: '🦄', Ocean: '🌊', Sports: '🏀', Minecraft: '🪓', 'Paw Patrol': '🐶' };
-      themeChoices.forEach(t => { html += `<button class="choice ${state.theme === t ? 'isSelected' : ''}"><div style="font-size:20px">${themeEmojiMap[t] || '🎨'}</div><div style="font-size:12px; margin-top:6px">${t}</div></button>`; });
+      themes.forEach(t => { 
+        html += `<button class="choice ${state.theme === t.name ? 'isSelected' : ''}" data-theme="${t.name}">
+          <div class="theme-card">
+            <div class="theme-image" style="background: ${t.gradient};">${t.icon}</div>
+            <div class="theme-name">${t.name}</div>
+          </div>
+        </button>`; 
+      });
       html += `</div></div>`;
 
       html += `<div class="step-buttons"><button class="btn small" id="backBtn">Back</button><button class="btn" id="nextBtn">Next</button></div></div>`;
@@ -909,17 +941,21 @@ async function testOllama() {
 
       document.querySelectorAll("#locationChoices .choice").forEach(btn => {
         btn.addEventListener("click", (e) => {
-          state.location = e.target.textContent;
+          const target = e.currentTarget;
+          state.location = target.dataset.location;
           document.querySelectorAll("#locationChoices .choice").forEach(b => b.classList.remove("isSelected"));
-          e.target.classList.add("isSelected");
+          target.classList.add("isSelected");
+          renderWizard(); // Re-render to update summary
         });
       });
 
       document.querySelectorAll("#themeChoices .choice").forEach(btn => {
         btn.addEventListener("click", (e) => {
-          state.theme = e.target.textContent;
+          const target = e.currentTarget;
+          state.theme = target.dataset.theme;
           document.querySelectorAll("#themeChoices .choice").forEach(b => b.classList.remove("isSelected"));
-          e.target.classList.add("isSelected");
+          target.classList.add("isSelected");
+          renderWizard(); // Re-render to update summary
         });
       });
 

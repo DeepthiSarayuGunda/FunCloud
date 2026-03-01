@@ -3,3 +3,9 @@
 window.ENV = {
   API_BASE_URL: '%%API_BASE_URL%%'
 };
+
+// Fallback if not replaced by build
+if (window.ENV.API_BASE_URL === '%%API_BASE_URL%%') {
+  console.warn('API_BASE_URL not set. Using window.FUNCLOUD_API_URL or default.');
+  window.ENV.API_BASE_URL = window.FUNCLOUD_API_URL || null;
+}

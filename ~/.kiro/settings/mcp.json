@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "aws": {
+      "command": "C:\\Users\\gunda\\AppData\\Local\\Microsoft\\WinGet\\Packages\\astral-sh.uv_Microsoft.Winget.Source_8wekyb3d8bbwe\\uvx.exe",
+      "args": [
+        "mcp-proxy-for-aws@latest",
+        "https://aws-mcp.us-east-1.api.aws/mcp",
+        "--profile",
+        "PowerUserAccess-823766426087",
+        "--metadata",
+        "AWS_REGION=us-east-1"
+      ]
+    }
+  }
+}
