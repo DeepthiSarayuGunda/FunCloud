@@ -878,7 +878,7 @@ async function testOllama() {
       document.getElementById("nextBtn").addEventListener("click", () => { if (state.type) { step = 2; renderWizard(); } });
 
     } else if (step === 2) {
-      // Location & Theme with icons and image placeholders
+      // Location & Theme with Google Images-style side panel
       const locations = [
         { name: "Mooney's Bay Park", icon: "🏞️", gradient: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)" },
         { name: "Andrew Haydon Park", icon: "🏞️", gradient: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" },
@@ -894,68 +894,72 @@ async function testOllama() {
           name: "Princess", 
           icon: "👑", 
           gradient: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)",
-          description: "A magical princess party with pink decorations, crown balloons, and a royal castle cake.",
-          decorEmojis: "👑 🎀 💖 🏰 ✨ 🎂 🎈"
+          description: "Magical princess party with pink & purple balloons, crown decorations, castle backdrop, and royal cake.",
+          decorEmojis: "👑 🎀 💖 🏰 ✨ 🎂 🎈 💝 🌸"
         },
         { 
           name: "Superheroes", 
           icon: "🦸‍♂️", 
           gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-          description: "An action-packed superhero party with bold colors, comic book decorations, and hero masks.",
-          decorEmojis: "🦸‍♂️ 💥 ⚡ 🎭 🎈 🎂 🏆"
+          description: "Action-packed superhero party with bold red & yellow colors, comic book decorations, hero masks, and cape accessories.",
+          decorEmojis: "🦸‍♂️ 💥 ⚡ 🎭 🎈 🎂 🏆 💪 🌟"
         },
         { 
           name: "Dino", 
           icon: "🦕", 
           gradient: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
-          description: "A prehistoric dinosaur adventure with jungle decorations, dino balloons, and fossil cake.",
-          decorEmojis: "🦕 🦖 🌴 🥚 🌋 🎂 🎈"
+          description: "Prehistoric dinosaur adventure with jungle green decorations, dino balloons, fossil dig activities, and volcano cake.",
+          decorEmojis: "🦕 🦖 🌴 🥚 🌋 🎂 🎈 🦴 🍃"
         },
         { 
           name: "Space", 
           icon: "🚀", 
           gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          description: "An out-of-this-world space party with stars, planets, rocket decorations, and galaxy cake.",
-          decorEmojis: "🚀 🌟 🪐 👨‍🚀 ✨ 🎂 🎈"
+          description: "Out-of-this-world space party with dark blue & purple galaxy theme, planet decorations, rocket props, and astronaut cake.",
+          decorEmojis: "🚀 🌟 🪐 👨‍🚀 ✨ 🎂 🎈 🌙 ⭐"
         },
         { 
           name: "Unicorn", 
           icon: "🦄", 
           gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
-          description: "A dreamy unicorn party with rainbow colors, sparkles, cloud decorations, and magical cake.",
-          decorEmojis: "🦄 🌈 ✨ ☁️ 💫 🎂 🎈"
+          description: "Dreamy unicorn party with pastel rainbow colors, sparkle decorations, cloud backdrop, and magical horn cake.",
+          decorEmojis: "🦄 🌈 ✨ ☁️ 💫 🎂 🎈 🌸 💖"
         },
         { 
           name: "Ocean", 
           icon: "🌊", 
           gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-          description: "An underwater ocean party with sea creatures, blue decorations, and wave-themed cake.",
-          decorEmojis: "🌊 🐠 🐙 🦈 🐚 🎂 🎈"
+          description: "Underwater ocean party with blue wave decorations, sea creature balloons, coral backdrop, and mermaid cake.",
+          decorEmojis: "🌊 🐠 🐙 🦈 🐚 🎂 🎈 🧜‍♀️ 🐬"
         },
         { 
           name: "Sports", 
           icon: "🏀", 
           gradient: "linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%)",
-          description: "An energetic sports party with team colors, ball decorations, and trophy cake.",
-          decorEmojis: "🏀 ⚽ 🏆 🎯 🥇 🎂 🎈"
+          description: "Energetic sports party with team colors, ball decorations, trophy displays, medal favors, and championship cake.",
+          decorEmojis: "🏀 ⚽ 🏆 🎯 🥇 🎂 🎈 🏅 ⚾"
         },
         { 
           name: "Minecraft", 
           icon: "🪓", 
           gradient: "linear-gradient(135deg, #96fbc4 0%, #f9f586 100%)",
-          description: "A blocky Minecraft party with pixelated decorations, creeper balloons, and block cake.",
-          decorEmojis: "🪓 ⛏️ 🧱 💎 🗡️ 🎂 🎈"
+          description: "Blocky Minecraft party with pixelated green decorations, creeper balloons, TNT props, and block-style cake.",
+          decorEmojis: "🪓 ⛏️ 🧱 💎 🗡️ 🎂 🎈 🟩 🟫"
         },
         { 
           name: "Paw Patrol", 
           icon: "🐶", 
           gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
-          description: "A rescue-themed Paw Patrol party with pup decorations, badges, and paw print cake.",
-          decorEmojis: "🐶 🚒 🚓 🐾 🦴 🎂 🎈"
+          description: "Rescue-themed Paw Patrol party with pup decorations, badge props, fire truck & police car displays, and paw print cake.",
+          decorEmojis: "🐶 🚒 🚓 🐾 🦴 🎂 🎈 🚁 🏅"
         }
       ];
 
-      html += `<div class="wizard-step"><div class="step-header"><div class="step-title">📍 Step 2: Location & Theme</div><div class="step-subtitle">Choose a location and theme</div></div>`;
+      html += `<div class="wizard-step">
+        <div class="step-header">
+          <div class="step-title">📍 Step 2: Location & Theme</div>
+          <div class="step-subtitle">Choose a location and theme for your party</div>
+        </div>`;
       
       // Party Summary Box
       if (state.type || state.location || state.theme) {
@@ -966,7 +970,7 @@ async function testOllama() {
         html += `</div>`;
       }
       
-      // Locations with image placeholders
+      // Locations section
       html += `<div class="plan-section"><div class="plan-header">📌 Locations (Ottawa)</div><div class="choiceGrid" id="locationChoices">`;
       locations.forEach(loc => { 
         html += `<button class="choice ${state.location === loc.name ? 'isSelected' : ''}" data-location="${loc.name}">
@@ -977,6 +981,85 @@ async function testOllama() {
         </button>`; 
       });
       html += `</div></div>`;
+
+      // Theme section with side panel layout
+      html += `<div class="plan-section">
+        <div class="plan-header">🎭 Party Theme</div>
+        <div class="theme-layout">
+          <!-- Left: Theme Grid -->
+          <div class="theme-grid-container">
+            <div class="choiceGrid theme-grid" id="themeChoices">`;
+      
+      themes.forEach((t, idx) => { 
+        html += `<button class="choice theme-choice ${state.theme === t.name ? 'isSelected' : ''}" data-theme="${t.name}" data-theme-index="${idx}">
+          <div class="theme-card">
+            <div class="theme-image" style="background: ${t.gradient};">${t.icon}</div>
+            <div class="theme-name">${t.name}</div>
+          </div>
+        </button>`; 
+      });
+      
+      html += `</div>
+          </div>
+          
+          <!-- Right: Sticky Preview Panel -->
+          <div class="theme-preview-panel" id="themePreviewPanel">
+            <div class="preview-placeholder">
+              <div class="preview-placeholder-icon">🎨</div>
+              <div class="preview-placeholder-text">Select a theme to see preview</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+      html += `<div class="step-buttons"><button class="btn small" id="backBtn">Back</button><button class="btn" id="nextBtn">Next</button></div></div>`;
+      wizardEl.innerHTML = html;
+
+      // Function to update preview panel
+      function updatePreviewPanel(themeIndex) {
+        const theme = themes[themeIndex];
+        const panel = document.getElementById("themePreviewPanel");
+        
+        panel.innerHTML = `
+          <div class="preview-content animate-fade">
+            <div class="preview-image" style="background: ${theme.gradient};">
+              <div class="preview-decorations">${theme.decorEmojis}</div>
+            </div>
+            <div class="preview-details">
+              <div class="preview-theme-icon">${theme.icon}</div>
+              <div class="preview-theme-name">${theme.name} Theme</div>
+              <div class="preview-description">${theme.description}</div>
+              <button class="preview-use-btn" id="useThemeBtn">
+                <span>✓</span> Use This Theme
+              </button>
+            </div>
+          </div>
+        `;
+        
+        // Add click handler for "Use This Theme" button
+        document.getElementById("useThemeBtn").addEventListener("click", () => {
+          state.theme = theme.name;
+          document.querySelectorAll("#themeChoices .choice").forEach(b => b.classList.remove("isSelected"));
+          document.querySelector(`#themeChoices .choice[data-theme="${theme.name}"]`).classList.add("isSelected");
+          
+          // Update summary
+          const summaryTheme = document.querySelector('.party-summary-item:last-child .party-summary-value');
+          if (summaryTheme) summaryTheme.textContent = state.theme;
+        });
+      }
+
+      document.querySelectorAll("#locationChoices .choice").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          const target = e.currentTarget;
+          state.location = target.dataset.location;
+          document.querySelectorAll("#locationChoices .choice").forEach(b => b.classList.remove("isSelected"));
+          target.classList.add("isSelected");
+          
+          // Update summary
+          const summaryLoc = document.querySelector('.party-summary-item:nth-child(2) .party-summary-value');
+          if (summaryLoc) summaryLoc.textContent = state.location;
+        });
+      });
 
       // Themes with image placeholders
       html += `<div class="plan-section"><div class="plan-header">🎭 Theme / Decor</div><div class="choiceGrid" id="themeChoices">`;
@@ -1036,14 +1119,12 @@ async function testOllama() {
           document.querySelectorAll("#themeChoices .choice").forEach(b => b.classList.remove("isSelected"));
           target.classList.add("isSelected");
           
-          // Show theme preview
-          showThemePreview(themeIndex);
+          // Update preview panel
+          updatePreviewPanel(themeIndex);
           
-          // Update summary without full re-render
-          const summaryValue = document.querySelector('.party-summary-item:last-child .party-summary-value');
-          if (summaryValue) {
-            summaryValue.textContent = state.theme;
-          }
+          // Update summary
+          const summaryTheme = document.querySelector('.party-summary-item:last-child .party-summary-value');
+          if (summaryTheme) summaryTheme.textContent = state.theme;
         });
       });
 
@@ -1052,7 +1133,7 @@ async function testOllama() {
         const selectedThemeBtn = document.querySelector(`#themeChoices .choice[data-theme="${state.theme}"]`);
         if (selectedThemeBtn) {
           const themeIndex = parseInt(selectedThemeBtn.dataset.themeIndex);
-          showThemePreview(themeIndex);
+          updatePreviewPanel(themeIndex);
         }
       }
 
